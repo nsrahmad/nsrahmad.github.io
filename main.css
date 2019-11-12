@@ -1,0 +1,47 @@
+@font-face {
+    font-family: 'Linux Biolinum';
+    src: url('Fonts/linbiolinum_rah-webfont.woff2') format('woff2'),
+         url('Fonts/linbiolinum_rah-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Linux Biolinum';
+    src: url('Fonts/linbiolinum_rbah-webfont.woff2') format('woff2'),
+         url('Fonts/linbiolinum_rbah-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Linux Biolinum';
+    src: url('Fonts/linbiolinum_riah-webfont.woff2') format('woff2'),
+         url('Fonts/linbiolinum_riah-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    height: 100%;
+    color: #222;
+    background-color: #fffffe;
+    font-size: 18px;
+    font-family: 'Linux Biolinum', sans-serif;
+}
+
+nav {
+    list-style: none;
+    display: inline-flex;
+    justify-content: space-around;
+    width: 200px;
+    padding-bottom: 20px;
+}
