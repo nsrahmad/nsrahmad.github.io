@@ -42,17 +42,18 @@ body {
     color: #222;
     background-color: #fffffe;
     font-size: 1.3em;
-    height: 100%;
-    line-height: 1.5;
+    min-height: 100vh;
     font-family: 'Linux Biolinum', sans-serif;
 }
 
 h3 {
+    flex-shrink: 0;
     font-style: italic;
     margin-bottom: -0.3em;
 }
 
 nav {
+    flex-shrink: 0;
     list-style: none;
     display: inline-flex;
     justify-content: space-around;
@@ -60,5 +61,12 @@ nav {
 }
 
 main {
+    line-height: 1.5;
+    flex-grow: 1;
     align-self: flex-start;
+}
+
+footer {
+    flex-shrink: 0;
+    padding-bottom: 1em;
 }
