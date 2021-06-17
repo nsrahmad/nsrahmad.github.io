@@ -28,6 +28,8 @@ header {
 
 a {
     color: #222;
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.1em;
 }
 
 nav {
