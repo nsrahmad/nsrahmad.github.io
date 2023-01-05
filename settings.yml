@@ -1,0 +1,5 @@
+﻿SiteTitle: Nisar Ahmad
+SiteDescription: Welcome to my blog
+Host: nsrahmad.github.io
+LinksUseHttps: true
+Copyright: => $"Copyright © {DateTime.Now.Year} Nisar Ahmad"
