@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "nsrahmad.github.io": {
+      "commandName": "Project",
+      "commandLineArgs": "preview"
+    }
+  }
+}
