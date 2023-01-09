@@ -1,1 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://nsrahmad.github.io/posts/hello</loc></url><url><loc>https://nsrahmad.github.io/</loc></url><url><loc>https://nsrahmad.github.io/posts</loc></url><url><loc>https://nsrahmad.github.io/tags/dotnet</loc></url><url><loc>https://nsrahmad.github.io/tags</loc></url></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://nsrahmad.github.io/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/hello/</loc>
+        <lastmod>2023-01-09</lastmod>
+    </url>
+</urlset>
