@@ -1,6 +1,7 @@
 ---
 title: "Advent of Code 2023 Using Pharo Smalltalk Day 2"
 date: 2023-12-02T23:10:23+05:30
+tags: ['smalltalk', 'programming', 'AdventOfCode']
 ---
 
 Yesterday's solution already looks facepalm worthy even though its been only

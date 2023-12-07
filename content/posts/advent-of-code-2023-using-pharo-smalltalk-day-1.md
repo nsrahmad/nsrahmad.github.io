@@ -1,6 +1,7 @@
 ---
 title: "Advent of Code 2023 Using Pharo Smalltalk Day 1"
 date: 2023-12-01T22:57:52+05:30
+tags: ['smalltalk', 'programming', 'AdventOfCode']
 ---
 
 I will do this year's Advent of Code challeges in Pharo Smalltalk. Let's see
