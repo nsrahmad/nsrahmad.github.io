@@ -197,7 +197,7 @@ grid in the inspector looks like:
 That's not how a grid should look. This is where Roassal comes in. Use the main
 menu `Library > Roassal3 > Load > Load full version` to load Roassal. Then add a
 method `visualize` to our `Grid2D` class. The actual name of the method could be
-anything, what matters is that it returns an instance of `RCanvas`.
+anything, what matters is that it returns an instance of `RCanvas`'s canvas.
 
 ```smalltalk
 visualize
