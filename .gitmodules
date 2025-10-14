@@ -1,6 +1,4 @@
-[submodule "themes/ananke"]
-	path = themes/ananke
-	url = https://github.com/theNewDynamic/gohugo-theme-ananke
-[submodule "themes/PaperMod"]
-	path = themes/PaperMod
-	url = https://github.com/nsrahmad/hugo-PaperMod.git
+[submodule "themes/linkita"]
+	path = themes/linkita
+	url = https://codeberg.org/salif/linkita.git
+	branch = linkita
