@@ -5,7 +5,7 @@ template = 'home.html'
 lang = 'en'
 
 # Show footer in home page
-footer = false
+footer = true
 
 # If you don't want to display id/bio/avatar, simply comment out that line
 name = "Nisar Ahmad"
@@ -16,7 +16,7 @@ links = [
 ]
 
 # Show a few recent posts in home page
-recent = false
+recent = true
 recent_max = 15
 recent_more_text = "more »"
 date_format = "%b %-d, %Y"

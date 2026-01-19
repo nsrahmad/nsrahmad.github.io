@@ -1,8 +1,9 @@
----
-title: "Advent of Code 2023 Using Pharo Smalltalk Day 3"
-date: 2023-12-10T19:55:44+05:30
-tags: ['smalltalk', 'programming', 'AdventOfCode']
----
++++
+title = "Advent of Code 2023 Using Pharo Smalltalk Day 3"
+date = 2023-12-10T19:55:44+05:30
+[taxonomies]
+tags = ['smalltalk', 'programming', 'AdventOfCode']
++++
 
 This was a busy week and I was unable to make a single post throughout the week.
 This however, does not mean I have abandoned AoC. I will try to catch up but I
