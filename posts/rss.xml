@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>Nisar&#x27;s site - Posts</title>
+      <link>https://nsrahmad.github.io/posts/</link>
+      <description>general stuff</description>
+      <generator>Zola</generator>
+      <language>en</language>
+      <atom:link href="https://nsrahmad.github.io/posts/rss.xml" rel="self" type="application/rss+xml"/>
+      <lastBuildDate>Sun, 10 Dec 2023 19:55:44 +0530</lastBuildDate>
+      <item>
+          <title>Advent of Code 2023 Using Pharo Smalltalk Day 3</title>
+          <pubDate>Sun, 10 Dec 2023 19:55:44 +0530</pubDate>
+          <author>Unknown</author>
+          <link>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-3/</link>
+          <guid>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-3/</guid>
+          <description xml:base="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-3/">&lt;p&gt;This was a busy week and I was unable to make a single post throughout the week.
+This however, does not mean I have abandoned AoC. I will try to catch up but I
+should mention that finishing everyday was not the goal to begin with, the goal
+for me is to learn Pharo while doing as many puzzles as I can.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;part-1&quot;&gt;Part 1&lt;a class=&quot;zola-anchor&quot; href=&quot;#part-1&quot; aria-label=&quot;Anchor link for: part-1&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Sample input for part 1 is :&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;code&quot; class=&quot;language-code &quot;&gt;&lt;code class=&quot;language-code&quot; data-lang=&quot;code&quot;&gt;467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;If a number is surrounded by &lt;code&gt;.&lt;&#x2F;code&gt; alone (including diagonally), then it is
+invalid and we have to reject it. After that the sum of remaining valid numbers
+is the answer. In the sample &lt;code&gt;114&lt;&#x2F;code&gt; and &lt;code&gt;58&lt;&#x2F;code&gt; are invalid.&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s open playground in pharo and insert the input :&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input |
+
+input := &amp;#x27;467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..&amp;#x27; lines.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I am also seprating the lines with &lt;code&gt;lines&lt;&#x2F;code&gt; message to string (In day 1 and 2, I
+was manually calling &lt;code&gt;splitOn&lt;&#x2F;code&gt; with newline to do that 🤦‍♂️).&lt;&#x2F;p&gt;
+&lt;p&gt;Now we need to calculate neighbors for each number. But before we do that, we
+need to make sure that every number has 8 neighbors, right now, the cell at
+corner will have only 3 neighbors, cell at edge will have 5 corners and so on.
+One trick I learned some time ago while doing TicTacToe was to surround the
+input with one additional &lt;code&gt;.&lt;&#x2F;code&gt; on all sides, which greatly simplifies
+calculations because now every cell (characters in this case) that we care about
+will have 8 neighbors.&lt;&#x2F;p&gt;
+&lt;p&gt;Also, I will not show the declaration of variables from now on. At the end I
+will link the complete source.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;padLines := [ :col |
+	 | paddedlineSize padLine result|
+	paddedlineSize := (col first) size + 2.
+	padLine := &amp;#x27;.&amp;#x27; repeat: paddedlineSize .
+	result := col collect: [ :each | &amp;#x27;.&amp;#x27;,each,&amp;#x27;.&amp;#x27;].
+	result addFirst: padLine.
+	result addLast: padLine ; 
+		yourself.
+].
+
+paddedLines := (padLines value: input asOrderedCollection).
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We add a line of dots at the start and at the end, while also adding a single
+&lt;code&gt;.&lt;&#x2F;code&gt; at the start and end of the line. since &lt;code&gt;addFirst&lt;&#x2F;code&gt; and &lt;code&gt;addLast&lt;&#x2F;code&gt; are not
+defined for arrays, we pass &lt;code&gt;input&lt;&#x2F;code&gt; as &lt;code&gt;OrderedCollection&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Now to detect numbers, we will use &lt;code&gt;PetitParser&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;aNumber := #digit asParser plus.
+numberRanges := paddedLines collect: [:each | aNumber matchingSkipRangesIn: each ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We are using &lt;code&gt;matchingSkipRangesIn:&lt;&#x2F;code&gt;, which doesn&#x27;t directly gives the matching
+number but the number&#x27;s range in the string.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-1-1.png&quot; alt=&quot;number ranges&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;So the first line doesn&#x27;t have any number, because we added a line of dots. In
+second line, &lt;code&gt;(2 to: 4)&lt;&#x2F;code&gt; is the number &lt;code&gt;467&lt;&#x2F;code&gt;. It starts at 2 because we
+added a &lt;code&gt;.&lt;&#x2F;code&gt; at the start of the line.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;generateNeighbors := [ :numInterval :line |
+	| currentLine previousLine nextLine start end result number |
+	previousLine := paddedLines at: (line - 1).
+	currentLine := paddedLines at: line.
+	nextLine := paddedLines at: (line + 1).
+	start := (numInterval first) - 1.
+	end := (numInterval last) + 1.
+	number := (currentLine copyFrom: (numInterval first) 
+		to: (numInterval last)) asNumber . 
+	result := (previousLine copyFrom: start to: end),
+		(currentLine at: start) asString , 
+		(nextLine  copyFrom: start to: end ),
+		(currentLine at: end) asString.
+	{ number . result}
+	].
+
+numbers := OrderedCollection new.
+
+numberRanges doWithIndex: [ :each :index |
+	 each isNotEmpty
+	 ifTrue: [numbers add: (each collect: [ :n |
+		(generateNeighbors value: n value: index)])]].
+
+numbers
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;which gives:
+&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-1-2.png&quot; alt=&quot;numbers with neighbors&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now any pair that has only &lt;code&gt;.&lt;&#x2F;code&gt; as neighbors is rejected and we sum the rest:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;((numbers collect: [ :each |
+	each reject: [ :e | (e at: 2) matchesRegex: &amp;#x27;\.*&amp;#x27;]
+		thenCollect: [ :e | e at: 1 ]]) flattened)
+	inject: 0 into: [ :sum :e | sum + e ]
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Replace the sample input with the real input and the part 1 is complete.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;part-2&quot;&gt;Part 2&lt;a class=&quot;zola-anchor&quot; href=&quot;#part-2&quot; aria-label=&quot;Anchor link for: part-2&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;In part 2, we need to find pair of numbers which share the same &lt;code&gt;*&lt;&#x2F;code&gt; as neighbor.
+Then we need to multiply those pair of numbers and add them all. It was easy
+enough to do this for sample input, but the real input has some edge cases which
+were harder to find. That is when I decided to represent the input as 2D grid
+and visualize it with Roassal.&lt;&#x2F;p&gt;
+&lt;p&gt;I found a 2D grid implementation on github, so we can use that. Evaluating the
+following should load it.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;Metacello new
+  baseline: &amp;#x27;ContainersGrid&amp;#x27;;
+  repository: &amp;#x27;github:&amp;#x2F;&amp;#x2F;Ducasse&amp;#x2F;Containers-Grid&amp;#x2F;src&amp;#x27;;
+  load.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The package provides a &lt;code&gt;CTGrid&lt;&#x2F;code&gt; class which we are going to subclass, because we
+will add some additional methods to it. Add a new class in your package named
+&lt;code&gt;Grid2D&lt;&#x2F;code&gt; which subclasses &lt;code&gt;CTGrid&lt;&#x2F;code&gt;. The code at this point looks like:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input padLines paddedLines grid |
+
+input := &amp;#x27;467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..&amp;#x27; lines.
+
+padLines := [ :col |
+	 | paddedlineSize padLine result|
+	paddedlineSize := (col first) size + 2.
+	padLine := &amp;#x27;.&amp;#x27; repeat: paddedlineSize .
+	result := col collect: [ :each | &amp;#x27;.&amp;#x27;,each,&amp;#x27;.&amp;#x27;].
+	result addFirst: padLine.
+	result addLast: padLine ; 
+		yourself.
+	].
+
+paddedLines := padLines value: input asOrderedCollection.
+
+grid := Grid2D columns: ((paddedLines at: 1) size) rows: (paddedLines size).
+
+paddedLines doWithIndex:  [ :each :row |
+	each doWithIndex: [ :e :col |
+		grid atRow: row atColumn: col put: e] ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We pad the lines as we did in part 1, then initialize a grid with the data. The
+grid in the inspector looks like:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-1.png&quot; alt=&quot;grid inspector without roassal&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;That&#x27;s not how a grid should look. This is where Roassal comes in. Use the main
+menu &lt;code&gt;Library &amp;gt; Roassal3 &amp;gt; Load &amp;gt; Load full version&lt;&#x2F;code&gt; to load Roassal. Then add a
+method &lt;code&gt;visualize&lt;&#x2F;code&gt; to our &lt;code&gt;Grid2D&lt;&#x2F;code&gt; class. The actual name of the method could be
+anything, what matters is that it returns an instance of &lt;code&gt;RCanvas&lt;&#x2F;code&gt;&#x27;s canvas.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;visualize
+ 	| c |
+	c := RSCanvas new.
+	self withIndicesDo:  [ :each :row :col | 
+		| circle labeledCircle |
+		circle :=  RSCircle new size: 30.
+		circle @ (RSPopup new
+		text: [ :e | row@col];
+		yourself).
+		circle color: Color pink muchLighter.
+		labeledCircle := { circle . RSLabel new color: Color black; text: each } 
+			asGroup asShapeFor: each.
+		c add: labeledCircle ].
+	RSGridLayout new lineItemsCount: self rowCount ; on: c shapes.
+	c @ RSCanvasController.
+	^ c canvas
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This gives a much better result. The output is interactive and we could zoom and
+pan around.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-2.png&quot; alt=&quot;grid visualized&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;We could do better, let&#x27;s add another method &lt;code&gt;visualizeWithHighlight&lt;&#x2F;code&gt; to
+&lt;code&gt;Grid2D&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;visualizeWithHighlight: aBlock
+	| c |
+	c := RSCanvas new.
+	self withIndicesDo:  [ :each :row :col | 
+		| circle labeledCircle |
+		circle :=  RSCircle new size: 30.
+		circle @ (RSPopup new
+		text: [ :e | row@col];
+		yourself).
+		circle color: (aBlock value: each).
+		labeledCircle := { circle . RSLabel new color: Color black; text: each } 
+		    asGroup asShapeFor: each.
+		c add: labeledCircle ].
+	RSGridLayout new lineItemsCount: self rowCount ; on: c shapes.
+	c @ RSCanvasController.
+	^ c canvas
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Everything is same except we pass a block which sets the color of the circle.
+This lets the caller decide which color to use for each circle. For example, if
+we wanted to highlight each &lt;code&gt;*&lt;&#x2F;code&gt; on the grid, we could do:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;grid visualizeWithHighlight: [ :each | each = $*
+	ifTrue: [ Color pink ]
+	ifFalse: [ Color pink muchLighter ] ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-3.png&quot; alt=&quot;star highlighted in grid&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;If we change the highlight color to red and switch input with real input, then
+the &lt;code&gt;*&lt;&#x2F;code&gt;&#x27;s on real input looks like:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-4.png&quot; alt=&quot;the real grid highlighted&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;You can zoom in and out and pan as usual. Mouse over gives me the
+actual location of the cell.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-5.png&quot; alt=&quot;grid zoomed in&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Also added a &lt;code&gt;at:&lt;&#x2F;code&gt; method to &lt;code&gt;Grid2D&lt;&#x2F;code&gt; which takes a point like &lt;code&gt;1@1&lt;&#x2F;code&gt; and gives
+us the item there:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;at: aPoint
+	aPoint isPoint ifTrue: [^ self atRow: aPoint x atColumn: aPoint y ].
+	^ self contents at: aPoint 
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Enough about visualization, let&#x27;s get back to the puzzle.&lt;&#x2F;p&gt;
+&lt;p&gt;First helper function we need is called &lt;code&gt;readNumberAt&lt;&#x2F;code&gt;. Given a point on the
+grid with a digit, This function returns the whole number by combining
+consecutive digits on the left or right.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;readNumberAt := [ :pos :aGrid | 
+	| result lPos rPos |
+	lPos := pos - (0 @ 1).
+	rPos := pos + (0 @ 1).
+	result := &amp;#x27;&amp;#x27;.
+	[(aGrid at: pos) isDigit &amp;amp; ((aGrid at: lPos) isDigit)] whileTrue: 
+		[result := (aGrid at: lPos) asString ,  result.
+		lPos := lPos - (0 @ 1)].
+	(aGrid at: pos) isDigit ifTrue: 
+		[result := result , (aGrid at: pos) asString].
+	[(aGrid at: pos) isDigit &amp;amp; (aGrid at: rPos) isDigit] whileTrue:
+		[result := result , (aGrid at: rPos) asString.
+		rPos := rPos + (0 @ 1)].
+	result
+].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Another helper is a &lt;code&gt;neighbors&lt;&#x2F;code&gt; fucntion, which gives eight neighbors of a point
+on grid. I am aware of the &lt;code&gt;eightNeighbors&lt;&#x2F;code&gt; method of the &lt;code&gt;Point&lt;&#x2F;code&gt; class which is
+part of the standard library. But it is problemetic for us, because it starts
+from the point directly below and goes anticlockwise. If a 2 digit number is at
+our lower left side, then the digtis will get split up. We don&#x27;t want that,
+hence our own &lt;code&gt;neighbors&lt;&#x2F;code&gt; function. It starts from upper left corner and goes
+clockwise:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;neighbors := [ :aPoint | 
+	{ {aPoint + (-1 @ -1) . aPoint + (-1 @ 0) . aPoint + (-1 @ 1)} 
+	. aPoint + (0 @ 1) . {aPoint + (1 @ 1) . aPoint + (1 @ 0) 
+	. aPoint + (1 @ -1) }. aPoint + (0 @ -1) } ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We go around the grid and collect each star&#x27;s location:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;stars := OrderedCollection new.
+
+grid withIndicesDo: [ :each :row :col |
+	(each = $*) ifTrue: [stars add: row@col]].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-6.png&quot; alt=&quot;sample input stars&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Then we go around each star and collect numbers which are in their neighborhood:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;starsWithNumbers := (stars collect: [ :each | neighbors value: each])
+	collect: [:e | 
+		{ (e at: 1) collect: [:top | readNumberAt value: top value: grid]
+		. readNumberAt value: (e at: 2) value: grid 
+		. (e at: 3) collect: [:bottom | readNumberAt value: bottom value: grid]
+		. readNumberAt value: (e at: 4) value: grid} flattened].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-7.png&quot; alt=&quot;sample numbers with star&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Notice how if 2 digits are neighbors of &lt;code&gt;*&lt;&#x2F;code&gt; then they get collected twice.
+Luckily they will always be adjacent so getting rid of them is not that hard.
+The naive version, by using &lt;code&gt;asSet&lt;&#x2F;code&gt; gets in trouble because one of the pairs are
+same numbers, and they are both at the top too. But the distinguishing factor
+is, they will have a space between them as a &lt;code&gt;.&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;starsWithNumbers := starsWithNumbers collect: [ :each |
+		| result |
+		result := OrderedCollection new.
+		each do: [ :x |
+			result isEmpty ifTrue: [ result add: x]
+			ifFalse: [(result last) = x ifFalse: [result add: x]]].
+		result].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This gets rid of the duplicates but keeps the same numbers if they appear as
+pair.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-8.png&quot; alt=&quot;duplicates gone&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now we need to get rid of blanks and the stars with single number as neighbor:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;starsWithNumbers := (starsWithNumbers collect: [ :each |
+		each reject: [ :e | e = &amp;#x27;&amp;#x27; ]
+		thenCollect: [:e | e asNumber]])
+		select: [ :e | (e size) &amp;gt; 1 ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-3-part-2-9.png&quot; alt=&quot;pairs are ready&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The data is finally in the desired shape. Reduce them with:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;starsWithNumbers inject: 0 into: [ :sum :e | ((e at: 1) * (e at: 2)) + sum ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And we are finished. The source is at the repository available at
+https:&#x2F;&#x2F;github.com&#x2F;nsrahmad&#x2F;AdventOfCode2023 .&lt;&#x2F;p&gt;
+&lt;p&gt;This was harder than usual because how useless the sample input was. Every edge
+case was in the actual input rather than in the sample. I really hated that at
+first but after finishing it, It didn&#x27;t feel that bad after all.&lt;&#x2F;p&gt;
+&lt;p&gt;Reminds me of my favorite quote from &quot;Ender&#x27;s Game&quot; by  Orson Scott Card:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“In the moment when I truly understand my enemy, understand him well enough to
+defeat him, then in that very moment I also love him. I think it’s impossible
+to really understand somebody, what they want, what they believe, and not love
+them the way they love themselves. And then, in that very moment when I love
+them.... I destroy them.”&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;I guess it is also true of software bugs and hard puzzles. See you soon.&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Advent of Code 2023 Using Pharo Smalltalk Day 2</title>
+          <pubDate>Sat, 02 Dec 2023 23:10:23 +0530</pubDate>
+          <author>Unknown</author>
+          <link>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/</link>
+          <guid>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/</guid>
+          <description xml:base="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/">&lt;p&gt;Yesterday&#x27;s solution already looks facepalm worthy even though its been only
+24 hours since. Hopefully today&#x27;s parsing code will be better. Let&#x27;s do this.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;day-2-part-1&quot;&gt;Day 2 - Part 1&lt;a class=&quot;zola-anchor&quot; href=&quot;#day-2-part-1&quot; aria-label=&quot;Anchor link for: day-2-part-1&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Sample input for the first part is :&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;code&quot; class=&quot;language-code &quot;&gt;&lt;code class=&quot;language-code&quot; data-lang=&quot;code&quot;&gt;Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The games are numbered and each game has multiple sets separated by &lt;code&gt;;&lt;&#x2F;code&gt; with
+colored cubes taken from a bag. The condition is that maximum &lt;code&gt;12 red&lt;&#x2F;code&gt;, &lt;code&gt;13 green&lt;&#x2F;code&gt; and &lt;code&gt;14 blue&lt;&#x2F;code&gt; cubes are allowed. So if any set in a game exceeds this
+limit, the game becomes invalid. We have to calculate the sum of &lt;code&gt;id&lt;&#x2F;code&gt;&#x27;s of valid
+games. With the sample input, games 3 (20 red) and 4 (15 blue) are rejected and
+sum of &lt;code&gt;id&lt;&#x2F;code&gt;&#x27;s of the remaining games is &lt;code&gt;8&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;We could take a shortcut here without parsing everything, but the unknown part
+2 might become harder, So it is better to just parse everything to proper data
+structures.&lt;&#x2F;p&gt;
+&lt;p&gt;We will continue with the same image we used [yesterday]({{&amp;lt; ref
+&quot;advent-of-code-2023-using-pharo-smalltalk-day-1&quot; &amp;gt;}}), which already has
+PetitParser loaded in it. Open a new playground get the sample input in it:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;Smalltalk&quot; class=&quot;language-Smalltalk &quot;&gt;&lt;code class=&quot;language-Smalltalk&quot; data-lang=&quot;Smalltalk&quot;&gt;| input |
+
+input := &amp;#x27;Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green&amp;#x27;.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Let&#x27;s build up our parser.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input aColor |
+&amp;quot;omitted&amp;quot;
+aColor := &amp;#x27;red&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;green&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;blue&amp;#x27; asParser ==&amp;gt; [ :c | Color named: c ] .
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We are not just matching color words but also transforming the result as actual
+color objects:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-2-part1-1.png&quot; alt=&quot;day 2 color match&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;anInteger&lt;&#x2F;code&gt; matches and transforms an integer number:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input aColor anInteger |
+&amp;quot;omitted&amp;quot;
+anInteger := #digit asParser plus token flatten ==&amp;gt; [ :d | d asNumber ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;aCube&lt;&#x2F;code&gt; is just a number with a color:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input aColor anInteger aCube |
+&amp;quot;omitted&amp;quot;
+aCube := anInteger , aColor trim.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;trim&lt;&#x2F;code&gt; is used to also match surrounding whitespace. &lt;code&gt;aSet&lt;&#x2F;code&gt; and &lt;code&gt;aGame&lt;&#x2F;code&gt; are
+slightly more involved, but they are built incrementally with rapid feedback.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input aColor anInteger aCube aSet aGame |
+&amp;quot;omitted&amp;quot;
+aSet := ((aCube , &amp;#x27;,&amp;#x27; asParser trim optional ==&amp;gt; [:c | c allButLast]) plus
+	, &amp;#x27;;&amp;#x27; asParser optional) ==&amp;gt; [ :set | set at: 1 ].
+aGame := (&amp;#x27;Game &amp;#x27; asParser, anInteger , &amp;#x27;:&amp;#x27; asParser)
+	==&amp;gt; [:game | game at: 2], aSet trim plus.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Unlike yesterday, we are not just matching stuff but also using transformers to
+get rid of &lt;code&gt;,&lt;&#x2F;code&gt;, &lt;code&gt;;&lt;&#x2F;code&gt;,&lt;code&gt;Game&lt;&#x2F;code&gt; and &lt;code&gt;:&lt;&#x2F;code&gt; etc. with this the parsing is complete.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;aGame  matchesSkipIn: input
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-2-part1-2.png&quot; alt=&quot;parse output&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Put the parsed result in &lt;code&gt;gamesCollection&lt;&#x2F;code&gt; variable&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input aColor anInteger aCube aSet aGame gamesCollection |
+&amp;quot;omitted&amp;quot;
+gamesCollection := (aGame  matchesSkipIn: input).
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now to solve the puzzle we need to know whats the maximum number of cubes of
+each color are in a game.&lt;&#x2F;p&gt;
+&lt;p&gt;I defined a block function (lambda &#x2F; anonymous function equivalent) which we
+store in another variable.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input aColor anInteger aCube aSet aGame gamesCollection maxRGBinSingleGame |
+&amp;quot;omitted&amp;quot;
+maxRGBinSingleGame := [ :game |
+	| dict |
+	dict := Dictionary new.
+	dict at: (Color named: &amp;#x27;red&amp;#x27;) put: 0;
+		at: (Color named: &amp;#x27;green&amp;#x27;) put: 0;
+	 	at: (Color named: &amp;#x27;blue&amp;#x27;) put: 0.
+	(game at: 2) do: [ :each | each do: [ :c | ((dict at: (c at: 2)) &amp;gt; (c at:
+1))
+		ifFalse: [ dict at: (c at: 2) put: (c at: 1) ]]].
+	{ (game at: 1) . dict }.
+].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;It basically creates a Dictionary with RGB counts at 0, then iterate on each set
+and check if the RGB count is &lt;code&gt;&amp;gt;&lt;&#x2F;code&gt; than the local dict. If it is update the
+local dict and at the end return the game id with local dict with max values of
+RGB as an array.&lt;&#x2F;p&gt;
+&lt;p&gt;Not pretty because of lots of manual indexing. But effective. The result seems
+to be right.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-2-part1-3.png&quot; alt=&quot;maximum colors&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now we know the maximum colored cubes count, we can use &lt;code&gt;reject:&lt;&#x2F;code&gt; to remove
+anything if it exceeds the official limit:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;((((gamesCollection collect: [ :each | maxRGBinSingleGame value: each ])
+	reject: [ :each | ((each at: 2) at: (Color named: &amp;#x27;red&amp;#x27;)) &amp;gt; 12 ])
+	reject: [ :each | ((each at: 2) at: (Color named: &amp;#x27;green&amp;#x27;)) &amp;gt; 13 ])
+	reject: [ :each | ((each at: 2) at: (Color named: &amp;#x27;blue&amp;#x27;)) &amp;gt; 14 ])
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This correctly gets rid of game 3 and 4.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-2-part1-4.png&quot; alt=&quot;invalid rejected&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now fold the &lt;code&gt;id&lt;&#x2F;code&gt;s using &lt;code&gt;inject:into:&lt;&#x2F;code&gt; and we get the correct result &lt;code&gt;8&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;((((gamesCollection collect: [ :each | maxRGBinSingleGame value: each ])
+	reject: [ :each | ((each at: 2) at: (Color named: &amp;#x27;red&amp;#x27;)) &amp;gt; 12 ])
+	reject: [ :each | ((each at: 2) at: (Color named: &amp;#x27;green&amp;#x27;)) &amp;gt; 13 ])
+	reject: [ :each | ((each at: 2) at: (Color named: &amp;#x27;blue&amp;#x27;)) &amp;gt; 14 ])
+	inject: 0 into: [:sum :each | sum + (each at: 1) ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;changing the sample input with the actaul &lt;code&gt;input.txt&lt;&#x2F;code&gt; and submitting the
+result, we pass the part 1 of the puzzle.
+&lt;img src=&quot;&#x2F;img&#x2F;day-2-part1-5.png&quot; alt=&quot;final part 1&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;day-2-part-2&quot;&gt;Day 2 - part 2&lt;a class=&quot;zola-anchor&quot; href=&quot;#day-2-part-2&quot; aria-label=&quot;Anchor link for: day-2-part-2&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;part 2 turned out to be simple. We need to again calculate the
+&lt;code&gt;maxRGBinSingleGame&lt;&#x2F;code&gt; (though they worded it differently) but this time we have
+to multiply each max r g b value in a game and sum the result.&lt;&#x2F;p&gt;
+&lt;p&gt;Everything up until &lt;code&gt;maxRGBinSingleGame&lt;&#x2F;code&gt; remains untouched, only the last step
+needs to be changed.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;((gamesCollection collect: [ :each | maxRGBinSingleGame value: each ])
+	collect: [ :each | ((each at: 2) values) inject: 1 into:[:prod :e| prod * e
+]]) inject: 0 into: [ :sum :e | sum + e ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-2-part2-1.png&quot; alt=&quot;final part 2, really?&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;and the answer is accepted. This concludes today&#x27;s puzzle.&lt;&#x2F;p&gt;
+&lt;p&gt;Thanks for reading.&lt;&#x2F;p&gt;
+</description>
+      </item>
+      <item>
+          <title>Advent of Code 2023 Using Pharo Smalltalk Day 1</title>
+          <pubDate>Fri, 01 Dec 2023 22:57:52 +0530</pubDate>
+          <author>Unknown</author>
+          <link>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-1/</link>
+          <guid>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-1/</guid>
+          <description xml:base="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-1/">&lt;p&gt;I will do this year&#x27;s Advent of Code challeges in Pharo Smalltalk. Let&#x27;s see
+how far I can go with it.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;day-1-part-1&quot;&gt;Day 1 - Part 1&lt;a class=&quot;zola-anchor&quot; href=&quot;#day-1-part-1&quot; aria-label=&quot;Anchor link for: day-1-part-1&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;Here is the sample input for the first part of the puzzle:&lt;&#x2F;p&gt;
+&lt;pre&gt;&lt;code&gt;1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Our task here is to extract the first digit and the last digit to form a single
+two digit number. For the four sample lines, these numbers will be 12, 38, 15,
+and 77. The answer to the puzzle is the sum of all these numbers, 142 in this
+case.&lt;&#x2F;p&gt;
+&lt;p&gt;well, Its time to start our pharo 11 vm.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-playground.png&quot; alt=&quot;The playground in Pharo Smalltalk&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Let&#x27;s get Petit Parser into our image from
+&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kursjan&#x2F;petitparser2&quot;&gt;Github&lt;&#x2F;a&gt;. Enter the following in the
+playground and &quot;Do it&quot; :&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;Metacello new
+    baseline: &amp;#x27;PetitParser2&amp;#x27;;
+    repository: &amp;#x27;github:&amp;#x2F;&amp;#x2F;kursjan&amp;#x2F;petitparser2&amp;#x27;;
+    load.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This will install the Petit parser 2. I spent some time playing with the
+&lt;a rel=&quot;nofollow noreferrer&quot; href=&quot;https:&#x2F;&#x2F;kursjan.github.io&#x2F;petitparser2&#x2F;&quot;&gt;documentaion&lt;&#x2F;a&gt; to learn the basics. The
+first step is trying to parse all digits:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;| input parser  parseResult |
+
+input := &amp;#x27;1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet&amp;#x27;.
+
+parser := #digit asParser.
+
+parseResult := parser matchesIn: input.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;which recognises all digits in the give input:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-first-digits.png&quot; alt=&quot;The digits in input&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Update our &lt;code&gt;parser&lt;&#x2F;code&gt; to also recognise new line:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;parser := #digit asParser &amp;#x2F; #space asParser.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-eol.png&quot; alt=&quot;Also recognise End of Line&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;There is probably a better and faster way of doing this with Petit Parser
+itself, but let&#x27;s stop using it and try the collections API to do the rest.&lt;&#x2F;p&gt;
+&lt;p&gt;First, Separate digits by line.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;parseResult splitOn: Character cr.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;and we have a collection of digits per line of input.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-lines.png&quot; alt=&quot;digits per line&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I made a mistake here of not assigning the result of &lt;code&gt;splitOn&lt;&#x2F;code&gt; to the variable
+and spent few minutes wondering about it. It is very easy to step through and
+fix the mistake.&lt;&#x2F;p&gt;
+&lt;p&gt;To make a single two digit number, first concatenate the first and last
+characters in each line (pharo uses &lt;code&gt;,&lt;&#x2F;code&gt; to join strings) and then cast
+it as a number:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;asNumbers := parseResult collect:
+	[ :each | ((each first asString), (each last asString)) asNumber ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-single-number.png&quot; alt=&quot;a single two digit number&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;inject: into:&lt;&#x2F;code&gt; reduces&#x2F;folds &lt;code&gt;asNumbers&lt;&#x2F;code&gt; to the sum of all elements.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;asNumbers inject: 0 into: [ :sum :each | sum + each ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-reduce.png&quot; alt=&quot;finally the result&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Looks good. Now download the &lt;code&gt;input.txt&lt;&#x2F;code&gt; into the same directory where the
+pharo image is for simple lookup, because that is our current working directory
+in pharo. And replace the sample input with actual input.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;input := &amp;#x27;input.txt&amp;#x27; asFileReference readStreamDo:
+	[ :stream | stream upToEnd  ].
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;this required few additional tweaks, like the line ending of the file was
+&lt;code&gt;Charactel lf&lt;&#x2F;code&gt;, and there was an extra empty collection at the end of file. But
+since we can always see the result, it was pretty easy to fix.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-part-1-final.png&quot; alt=&quot;well the actual final result&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;This concludes part 1.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;day-1-part-2&quot;&gt;Day 1 - Part 2&lt;a class=&quot;zola-anchor&quot; href=&quot;#day-1-part-2&quot; aria-label=&quot;Anchor link for: day-1-part-2&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;&#x2F;a&gt;
+&lt;&#x2F;h2&gt;
+&lt;p&gt;The sample input for second part is :&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;code&quot; class=&quot;language-code &quot;&gt;&lt;code class=&quot;language-code&quot; data-lang=&quot;code&quot;&gt;two1nine
+eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The end goal is still the same, but numbers in words like &lt;code&gt;one&lt;&#x2F;code&gt;,&lt;code&gt;two&lt;&#x2F;code&gt;,&lt;code&gt;three&lt;&#x2F;code&gt;
+etc. are also counted as single digits. Accepted results for the input are 29,
+83, 13, 24, 42, 14, and 76. Adding these together produces 281.&lt;&#x2F;p&gt;
+&lt;p&gt;Trying to recognise words from &lt;code&gt;one&lt;&#x2F;code&gt; to &lt;code&gt;nine&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;wordDigit := &amp;#x27;one&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;two&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;three&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;four&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;five&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;six&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;seven&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;eight&amp;#x27; asParser
+	&amp;#x2F; &amp;#x27;nine&amp;#x27; asParser .
+
+wordDigit matchesIn: input.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This gives:
+&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-1.png&quot; alt=&quot;parsing the words&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;One interesting case is &lt;code&gt;eightwothree&lt;&#x2F;code&gt;. should we treat it as &lt;code&gt;eight&lt;&#x2F;code&gt;, &lt;code&gt;wo&lt;&#x2F;code&gt;,
+&lt;code&gt;three&lt;&#x2F;code&gt; or &lt;code&gt;eight&lt;&#x2F;code&gt;, &lt;code&gt;two&lt;&#x2F;code&gt;, &lt;code&gt;three&lt;&#x2F;code&gt;. Since the result is knows to be 83, lets go
+with the first choice here. Instead of using &lt;code&gt;matchesIn:&lt;&#x2F;code&gt; , we will use
+&lt;code&gt;matchesSkipIn:&lt;&#x2F;code&gt;, which doesn&#x27;t recognise partially overlapping words.
+&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-2.png&quot; alt=&quot;skip the partial words&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;we can just combine this parser with the digit and space parsers from part 1:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;parser := (wordDigit &amp;#x2F; #digit asParser) &amp;#x2F; #space asParser.
+parser matchesSkipIn: input.
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-3.png&quot; alt=&quot;the whole parser&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;If we could replace the words with corresponding characters, the rest will be
+the same as part 1. Petit parser makes it really easy. To replace &lt;code&gt;two&lt;&#x2F;code&gt; with
+&lt;code&gt;$2&lt;&#x2F;code&gt;, we can just transform it as:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;&amp;#x27;two` asParser ==&amp;gt; [:str | $2]
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-4.png&quot; alt=&quot;replace two with 2&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The block takes &lt;code&gt;two&lt;&#x2F;code&gt; as parameter. we ignore it simply return &lt;code&gt;$2&lt;&#x2F;code&gt;
+(character literal). We shouldn&#x27;t try to convert it to a number just yet. Since
+this works, do this to all words.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;smalltalk&quot; class=&quot;language-smalltalk &quot;&gt;&lt;code class=&quot;language-smalltalk&quot; data-lang=&quot;smalltalk&quot;&gt;wordDigit := (&amp;#x27;one&amp;#x27; asParser ==&amp;gt; [ :str | $1 ])
+	&amp;#x2F; (&amp;#x27;two&amp;#x27; asParser ==&amp;gt; [ :str | $2 ])
+	&amp;#x2F; (&amp;#x27;three&amp;#x27; asParser ==&amp;gt; [ :str | $3 ])
+	&amp;#x2F; (&amp;#x27;four&amp;#x27; asParser ==&amp;gt; [ :str | $4 ])
+	&amp;#x2F; (&amp;#x27;five&amp;#x27; asParser ==&amp;gt; [ :str | $5 ])
+	&amp;#x2F; (&amp;#x27;six&amp;#x27; asParser ==&amp;gt; [ :str | $6 ])
+	&amp;#x2F; (&amp;#x27;seven&amp;#x27; asParser ==&amp;gt; [ :str | $7 ])
+	&amp;#x2F; (&amp;#x27;eight&amp;#x27; asParser ==&amp;gt; [ :str | $8 ])
+	&amp;#x2F; (&amp;#x27;nine&amp;#x27; asParser ==&amp;gt; [:str | $9]).
+&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-5.png&quot; alt=&quot;replace all words&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;And rest of the problem is same as part 1.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-6.png&quot; alt=&quot;rest of the problem&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;281&lt;&#x2F;code&gt; is the expected answer. So trying this with the actual &lt;code&gt;input.txt&lt;&#x2F;code&gt;:
+&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-7.png&quot; alt=&quot;the final answer&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The answer is rejected as incorrect. I spent going over everything and can&#x27;t
+find anything wrong at all. Finally I turned to Reddit, and the top post at AOC
+subreddit mentioned the partial case, that &lt;code&gt;eightwothree&lt;&#x2F;code&gt; should be treated as
+&lt;code&gt;eight&lt;&#x2F;code&gt;, &lt;code&gt;two&lt;&#x2F;code&gt; and &lt;code&gt;three&lt;&#x2F;code&gt;. Felt an oversight, but on second thought, something
+happening in real life all the time. All we have to do is use &lt;code&gt;matchesIn:&lt;&#x2F;code&gt;
+instead of &lt;code&gt;matchesSkipIn:&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;img&#x2F;day-1-part2-8.png&quot; alt=&quot;lol the acutal final answer&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;And the answer is accepted. We are done for the day. See you tomorrow.&lt;&#x2F;p&gt;
+</description>
+      </item>
+    </channel>
+</rss>

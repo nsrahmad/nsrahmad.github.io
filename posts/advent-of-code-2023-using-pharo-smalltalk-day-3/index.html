@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Writings about stuff">
+
+  <title>Advent of Code 2023 Using Pharo Smalltalk Day 3</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/hl-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/hl-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#part-1">Part 1</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#part-2">Part 2</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Advent of Code 2023 Using Pharo Smalltalk Day 3</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Dec 10, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://nsrahmad.github.io/tags/smalltalk"><span>#</span>smalltalk</a><a class="instant" href="https://nsrahmad.github.io/tags/programming"><span>#</span>programming</a><a class="instant" href="https://nsrahmad.github.io/tags/adventofcode"><span>#</span>AdventOfCode</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        <blockquote id="outdate_alert" class="callout caution hidden" data-days="30"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <p>This was a busy week and I was unable to make a single post throughout the week.
+This however, does not mean I have abandoned AoC. I will try to catch up but I
+should mention that finishing everyday was not the goal to begin with, the goal
+for me is to learn Pharo while doing as many puzzles as I can.</p>
+<h2 id="part-1">Part 1<a class="zola-anchor" href="#part-1" aria-label="Anchor link for: part-1" style="visibility: hidden;"></a>
+</h2>
+<p>Sample input for part 1 is :</p>
+<pre data-lang="code" class="language-code "><code class="language-code" data-lang="code">467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..
+</code></pre>
+<p>If a number is surrounded by <code>.</code> alone (including diagonally), then it is
+invalid and we have to reject it. After that the sum of remaining valid numbers
+is the answer. In the sample <code>114</code> and <code>58</code> are invalid.</p>
+<p>Let's open playground in pharo and insert the input :</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">| input |
+
+input := &#x27;467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..&#x27; lines.
+</code></pre>
+<p>I am also seprating the lines with <code>lines</code> message to string (In day 1 and 2, I
+was manually calling <code>splitOn</code> with newline to do that 🤦‍♂️).</p>
+<p>Now we need to calculate neighbors for each number. But before we do that, we
+need to make sure that every number has 8 neighbors, right now, the cell at
+corner will have only 3 neighbors, cell at edge will have 5 corners and so on.
+One trick I learned some time ago while doing TicTacToe was to surround the
+input with one additional <code>.</code> on all sides, which greatly simplifies
+calculations because now every cell (characters in this case) that we care about
+will have 8 neighbors.</p>
+<p>Also, I will not show the declaration of variables from now on. At the end I
+will link the complete source.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">padLines := [ :col |
+	 | paddedlineSize padLine result|
+	paddedlineSize := (col first) size + 2.
+	padLine := &#x27;.&#x27; repeat: paddedlineSize .
+	result := col collect: [ :each | &#x27;.&#x27;,each,&#x27;.&#x27;].
+	result addFirst: padLine.
+	result addLast: padLine ; 
+		yourself.
+].
+
+paddedLines := (padLines value: input asOrderedCollection).
+</code></pre>
+<p>We add a line of dots at the start and at the end, while also adding a single
+<code>.</code> at the start and end of the line. since <code>addFirst</code> and <code>addLast</code> are not
+defined for arrays, we pass <code>input</code> as <code>OrderedCollection</code>.</p>
+<p>Now to detect numbers, we will use <code>PetitParser</code>.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">aNumber := #digit asParser plus.
+numberRanges := paddedLines collect: [:each | aNumber matchingSkipRangesIn: each ].
+</code></pre>
+<p>We are using <code>matchingSkipRangesIn:</code>, which doesn't directly gives the matching
+number but the number's range in the string.</p>
+<p><img src="/img/day-3-part-1-1.png" alt="number ranges" /></p>
+<p>So the first line doesn't have any number, because we added a line of dots. In
+second line, <code>(2 to: 4)</code> is the number <code>467</code>. It starts at 2 because we
+added a <code>.</code> at the start of the line.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">generateNeighbors := [ :numInterval :line |
+	| currentLine previousLine nextLine start end result number |
+	previousLine := paddedLines at: (line - 1).
+	currentLine := paddedLines at: line.
+	nextLine := paddedLines at: (line + 1).
+	start := (numInterval first) - 1.
+	end := (numInterval last) + 1.
+	number := (currentLine copyFrom: (numInterval first) 
+		to: (numInterval last)) asNumber . 
+	result := (previousLine copyFrom: start to: end),
+		(currentLine at: start) asString , 
+		(nextLine  copyFrom: start to: end ),
+		(currentLine at: end) asString.
+	{ number . result}
+	].
+
+numbers := OrderedCollection new.
+
+numberRanges doWithIndex: [ :each :index |
+	 each isNotEmpty
+	 ifTrue: [numbers add: (each collect: [ :n |
+		(generateNeighbors value: n value: index)])]].
+
+numbers
+</code></pre>
+<p>which gives:
+<img src="/img/day-3-part-1-2.png" alt="numbers with neighbors" /></p>
+<p>Now any pair that has only <code>.</code> as neighbors is rejected and we sum the rest:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">((numbers collect: [ :each |
+	each reject: [ :e | (e at: 2) matchesRegex: &#x27;\.*&#x27;]
+		thenCollect: [ :e | e at: 1 ]]) flattened)
+	inject: 0 into: [ :sum :e | sum + e ]
+</code></pre>
+<p>Replace the sample input with the real input and the part 1 is complete.</p>
+<h2 id="part-2">Part 2<a class="zola-anchor" href="#part-2" aria-label="Anchor link for: part-2" style="visibility: hidden;"></a>
+</h2>
+<p>In part 2, we need to find pair of numbers which share the same <code>*</code> as neighbor.
+Then we need to multiply those pair of numbers and add them all. It was easy
+enough to do this for sample input, but the real input has some edge cases which
+were harder to find. That is when I decided to represent the input as 2D grid
+and visualize it with Roassal.</p>
+<p>I found a 2D grid implementation on github, so we can use that. Evaluating the
+following should load it.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">Metacello new
+  baseline: &#x27;ContainersGrid&#x27;;
+  repository: &#x27;github:&#x2F;&#x2F;Ducasse&#x2F;Containers-Grid&#x2F;src&#x27;;
+  load.
+</code></pre>
+<p>The package provides a <code>CTGrid</code> class which we are going to subclass, because we
+will add some additional methods to it. Add a new class in your package named
+<code>Grid2D</code> which subclasses <code>CTGrid</code>. The code at this point looks like:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">| input padLines paddedLines grid |
+
+input := &#x27;467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..&#x27; lines.
+
+padLines := [ :col |
+	 | paddedlineSize padLine result|
+	paddedlineSize := (col first) size + 2.
+	padLine := &#x27;.&#x27; repeat: paddedlineSize .
+	result := col collect: [ :each | &#x27;.&#x27;,each,&#x27;.&#x27;].
+	result addFirst: padLine.
+	result addLast: padLine ; 
+		yourself.
+	].
+
+paddedLines := padLines value: input asOrderedCollection.
+
+grid := Grid2D columns: ((paddedLines at: 1) size) rows: (paddedLines size).
+
+paddedLines doWithIndex:  [ :each :row |
+	each doWithIndex: [ :e :col |
+		grid atRow: row atColumn: col put: e] ].
+</code></pre>
+<p>We pad the lines as we did in part 1, then initialize a grid with the data. The
+grid in the inspector looks like:</p>
+<p><img src="/img/day-3-part-2-1.png" alt="grid inspector without roassal" /></p>
+<p>That's not how a grid should look. This is where Roassal comes in. Use the main
+menu <code>Library &gt; Roassal3 &gt; Load &gt; Load full version</code> to load Roassal. Then add a
+method <code>visualize</code> to our <code>Grid2D</code> class. The actual name of the method could be
+anything, what matters is that it returns an instance of <code>RCanvas</code>'s canvas.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">visualize
+ 	| c |
+	c := RSCanvas new.
+	self withIndicesDo:  [ :each :row :col | 
+		| circle labeledCircle |
+		circle :=  RSCircle new size: 30.
+		circle @ (RSPopup new
+		text: [ :e | row@col];
+		yourself).
+		circle color: Color pink muchLighter.
+		labeledCircle := { circle . RSLabel new color: Color black; text: each } 
+			asGroup asShapeFor: each.
+		c add: labeledCircle ].
+	RSGridLayout new lineItemsCount: self rowCount ; on: c shapes.
+	c @ RSCanvasController.
+	^ c canvas
+</code></pre>
+<p>This gives a much better result. The output is interactive and we could zoom and
+pan around.</p>
+<p><img src="/img/day-3-part-2-2.png" alt="grid visualized" /></p>
+<p>We could do better, let's add another method <code>visualizeWithHighlight</code> to
+<code>Grid2D</code>:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">visualizeWithHighlight: aBlock
+	| c |
+	c := RSCanvas new.
+	self withIndicesDo:  [ :each :row :col | 
+		| circle labeledCircle |
+		circle :=  RSCircle new size: 30.
+		circle @ (RSPopup new
+		text: [ :e | row@col];
+		yourself).
+		circle color: (aBlock value: each).
+		labeledCircle := { circle . RSLabel new color: Color black; text: each } 
+		    asGroup asShapeFor: each.
+		c add: labeledCircle ].
+	RSGridLayout new lineItemsCount: self rowCount ; on: c shapes.
+	c @ RSCanvasController.
+	^ c canvas
+</code></pre>
+<p>Everything is same except we pass a block which sets the color of the circle.
+This lets the caller decide which color to use for each circle. For example, if
+we wanted to highlight each <code>*</code> on the grid, we could do:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">grid visualizeWithHighlight: [ :each | each = $*
+	ifTrue: [ Color pink ]
+	ifFalse: [ Color pink muchLighter ] ].
+</code></pre>
+<p><img src="/img/day-3-part-2-3.png" alt="star highlighted in grid" /></p>
+<p>If we change the highlight color to red and switch input with real input, then
+the <code>*</code>'s on real input looks like:</p>
+<p><img src="/img/day-3-part-2-4.png" alt="the real grid highlighted" /></p>
+<p>You can zoom in and out and pan as usual. Mouse over gives me the
+actual location of the cell.</p>
+<p><img src="/img/day-3-part-2-5.png" alt="grid zoomed in" /></p>
+<p>Also added a <code>at:</code> method to <code>Grid2D</code> which takes a point like <code>1@1</code> and gives
+us the item there:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">at: aPoint
+	aPoint isPoint ifTrue: [^ self atRow: aPoint x atColumn: aPoint y ].
+	^ self contents at: aPoint 
+</code></pre>
+<p>Enough about visualization, let's get back to the puzzle.</p>
+<p>First helper function we need is called <code>readNumberAt</code>. Given a point on the
+grid with a digit, This function returns the whole number by combining
+consecutive digits on the left or right.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">readNumberAt := [ :pos :aGrid | 
+	| result lPos rPos |
+	lPos := pos - (0 @ 1).
+	rPos := pos + (0 @ 1).
+	result := &#x27;&#x27;.
+	[(aGrid at: pos) isDigit &amp; ((aGrid at: lPos) isDigit)] whileTrue: 
+		[result := (aGrid at: lPos) asString ,  result.
+		lPos := lPos - (0 @ 1)].
+	(aGrid at: pos) isDigit ifTrue: 
+		[result := result , (aGrid at: pos) asString].
+	[(aGrid at: pos) isDigit &amp; (aGrid at: rPos) isDigit] whileTrue:
+		[result := result , (aGrid at: rPos) asString.
+		rPos := rPos + (0 @ 1)].
+	result
+].
+</code></pre>
+<p>Another helper is a <code>neighbors</code> fucntion, which gives eight neighbors of a point
+on grid. I am aware of the <code>eightNeighbors</code> method of the <code>Point</code> class which is
+part of the standard library. But it is problemetic for us, because it starts
+from the point directly below and goes anticlockwise. If a 2 digit number is at
+our lower left side, then the digtis will get split up. We don't want that,
+hence our own <code>neighbors</code> function. It starts from upper left corner and goes
+clockwise:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">neighbors := [ :aPoint | 
+	{ {aPoint + (-1 @ -1) . aPoint + (-1 @ 0) . aPoint + (-1 @ 1)} 
+	. aPoint + (0 @ 1) . {aPoint + (1 @ 1) . aPoint + (1 @ 0) 
+	. aPoint + (1 @ -1) }. aPoint + (0 @ -1) } ].
+</code></pre>
+<p>We go around the grid and collect each star's location:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">stars := OrderedCollection new.
+
+grid withIndicesDo: [ :each :row :col |
+	(each = $*) ifTrue: [stars add: row@col]].
+</code></pre>
+<p><img src="/img/day-3-part-2-6.png" alt="sample input stars" /></p>
+<p>Then we go around each star and collect numbers which are in their neighborhood:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">starsWithNumbers := (stars collect: [ :each | neighbors value: each])
+	collect: [:e | 
+		{ (e at: 1) collect: [:top | readNumberAt value: top value: grid]
+		. readNumberAt value: (e at: 2) value: grid 
+		. (e at: 3) collect: [:bottom | readNumberAt value: bottom value: grid]
+		. readNumberAt value: (e at: 4) value: grid} flattened].
+</code></pre>
+<p><img src="/img/day-3-part-2-7.png" alt="sample numbers with star" /></p>
+<p>Notice how if 2 digits are neighbors of <code>*</code> then they get collected twice.
+Luckily they will always be adjacent so getting rid of them is not that hard.
+The naive version, by using <code>asSet</code> gets in trouble because one of the pairs are
+same numbers, and they are both at the top too. But the distinguishing factor
+is, they will have a space between them as a <code>.</code>.</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">starsWithNumbers := starsWithNumbers collect: [ :each |
+		| result |
+		result := OrderedCollection new.
+		each do: [ :x |
+			result isEmpty ifTrue: [ result add: x]
+			ifFalse: [(result last) = x ifFalse: [result add: x]]].
+		result].
+</code></pre>
+<p>This gets rid of the duplicates but keeps the same numbers if they appear as
+pair.</p>
+<p><img src="/img/day-3-part-2-8.png" alt="duplicates gone" /></p>
+<p>Now we need to get rid of blanks and the stars with single number as neighbor:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">starsWithNumbers := (starsWithNumbers collect: [ :each |
+		each reject: [ :e | e = &#x27;&#x27; ]
+		thenCollect: [:e | e asNumber]])
+		select: [ :e | (e size) &gt; 1 ].
+</code></pre>
+<p><img src="/img/day-3-part-2-9.png" alt="pairs are ready" /></p>
+<p>The data is finally in the desired shape. Reduce them with:</p>
+<pre data-lang="smalltalk" class="language-smalltalk "><code class="language-smalltalk" data-lang="smalltalk">starsWithNumbers inject: 0 into: [ :sum :e | ((e at: 1) * (e at: 2)) + sum ].
+</code></pre>
+<p>And we are finished. The source is at the repository available at
+https://github.com/nsrahmad/AdventOfCode2023 .</p>
+<p>This was harder than usual because how useless the sample input was. Every edge
+case was in the actual input rather than in the sample. I really hated that at
+first but after finishing it, It didn't feel that bad after all.</p>
+<p>Reminds me of my favorite quote from "Ender's Game" by  Orson Scott Card:</p>
+<blockquote>
+<p>“In the moment when I truly understand my enemy, understand him well enough to
+defeat him, then in that very moment I also love him. I think it’s impossible
+to really understand somebody, what they want, what they believe, and not love
+them the way they love themselves. And then, in that very moment when I love
+them.... I destroy them.”</p>
+</blockquote>
+<p>I guess it is also true of software bugs and hard puzzles. See you soon.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    
+
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2026 Nisar Ahmad
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    
+      
+    
+    
+    <a id="rss-btn" href="https://nsrahmad.github.io/posts/rss.xml">RSS</a>
+    
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts&#x2F;rss.xml">https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts&#x2F;rss.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts&#x2F;rss.xml" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>
