@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Writings about stuff">
+
+  <title>Advent of Code 2023 Using Pharo Smalltalk Day 3</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#part-1">Part 1</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#part-2">Part 2</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Advent of Code 2023 Using Pharo Smalltalk Day 3</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Dec 10, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://nsrahmad.github.io/tags/smalltalk"><span>#</span>smalltalk</a><a class="instant" href="https://nsrahmad.github.io/tags/programming"><span>#</span>programming</a><a class="instant" href="https://nsrahmad.github.io/tags/adventofcode"><span>#</span>AdventOfCode</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        <blockquote id="outdate_alert" class="callout caution hidden" data-days="30"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <p>This was a busy week and I was unable to make a single post throughout the week.
+This however, does not mean I have abandoned AoC. I will try to catch up but I
+should mention that finishing everyday was not the goal to begin with, the goal
+for me is to learn Pharo while doing as many puzzles as I can.</p>
+<h2 id="part-1">Part 1<a class="zola-anchor" href="#part-1" aria-label="Anchor link for: part-1" style="visibility: hidden;"></a>
+</h2>
+<p>Sample input for part 1 is :</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>467..114..</span></span>
+<span class="giallo-l"><span>...*......</span></span>
+<span class="giallo-l"><span>..35..633.</span></span>
+<span class="giallo-l"><span>......#...</span></span>
+<span class="giallo-l"><span>617*......</span></span>
+<span class="giallo-l"><span>.....+.58.</span></span>
+<span class="giallo-l"><span>..592.....</span></span>
+<span class="giallo-l"><span>......755.</span></span>
+<span class="giallo-l"><span>...$.*....</span></span>
+<span class="giallo-l"><span>.664.598..</span></span></code></pre>
+<p>If a number is surrounded by <code>.</code> alone (including diagonally), then it is
+invalid and we have to reject it. After that the sum of remaining valid numbers
+is the answer. In the sample <code>114</code> and <code>58</code> are invalid.</p>
+<p>Let's open playground in pharo and insert the input :</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">467..114..</span></span>
+<span class="giallo-l"><span class="z-string">...*......</span></span>
+<span class="giallo-l"><span class="z-string">..35..633.</span></span>
+<span class="giallo-l"><span class="z-string">......#...</span></span>
+<span class="giallo-l"><span class="z-string">617*......</span></span>
+<span class="giallo-l"><span class="z-string">.....+.58.</span></span>
+<span class="giallo-l"><span class="z-string">..592.....</span></span>
+<span class="giallo-l"><span class="z-string">......755.</span></span>
+<span class="giallo-l"><span class="z-string">...$.*....</span></span>
+<span class="giallo-l"><span class="z-string">.664.598..</span><span class="z-punctuation z-definition z-string">&#39;</span><span> lines</span><span>.</span></span></code></pre>
+<p>I am also seprating the lines with <code>lines</code> message to string (In day 1 and 2, I
+was manually calling <code>splitOn</code> with newline to do that 🤦‍♂️).</p>
+<p>Now we need to calculate neighbors for each number. But before we do that, we
+need to make sure that every number has 8 neighbors, right now, the cell at
+corner will have only 3 neighbors, cell at edge will have 5 corners and so on.
+One trick I learned some time ago while doing TicTacToe was to surround the
+input with one additional <code>.</code> on all sides, which greatly simplifies
+calculations because now every cell (characters in this case) that we care about
+will have 8 neighbors.</p>
+<p>Also, I will not show the declaration of variables from now on. At the end I
+will link the complete source.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>padLines </span><span class="z-keyword">:=</span><span> [</span><span class="z-variable"> :col</span><span> |</span></span>
+<span class="giallo-l"><span>	 |</span><span class="z-variable z-other"> paddedlineSize</span><span class="z-variable z-other"> padLine</span><span class="z-variable z-other"> result</span><span>|</span></span>
+<span class="giallo-l"><span>	paddedlineSize </span><span class="z-keyword">:=</span><span> (col first) </span><span class="z-support">size</span><span class="z-keyword"> +</span><span class="z-constant"> 2</span><span>.</span></span>
+<span class="giallo-l"><span>	padLine </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">&#39;</span><span> repeat: paddedlineSize </span><span>.</span></span>
+<span class="giallo-l"><span>	result </span><span class="z-keyword">:=</span><span> col collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-keyword">,</span><span>each</span><span class="z-keyword">,</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">&#39;</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	result addFirst: padLine</span><span>.</span></span>
+<span class="giallo-l"><span>	result addLast: padLine </span><span>;</span><span> </span></span>
+<span class="giallo-l"><span class="z-keyword">		yourself</span><span>.</span></span>
+<span class="giallo-l"><span>]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>paddedLines </span><span class="z-keyword">:=</span><span> (padLines </span><span class="z-support">value</span><span>: input asOrderedCollection)</span><span>.</span></span></code></pre>
+<p>We add a line of dots at the start and at the end, while also adding a single
+<code>.</code> at the start and end of the line. since <code>addFirst</code> and <code>addLast</code> are not
+defined for arrays, we pass <code>input</code> as <code>OrderedCollection</code>.</p>
+<p>Now to detect numbers, we will use <code>PetitParser</code>.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>aNumber </span><span class="z-keyword">:=</span><span class="z-constant"> #</span><span class="z-constant">digit</span><span> asParser plus</span><span>.</span></span>
+<span class="giallo-l"><span>numberRanges </span><span class="z-keyword">:=</span><span> paddedLines collect: </span><span>[</span><span class="z-variable">:each</span><span> |</span><span> aNumber matchingSkipRangesIn: each </span><span>]</span><span>.</span></span></code></pre>
+<p>We are using <code>matchingSkipRangesIn:</code>, which doesn't directly gives the matching
+number but the number's range in the string.</p>
+<p><img src="/img/day-3-part-1-1.png" alt="number ranges" /></p>
+<p>So the first line doesn't have any number, because we added a line of dots. In
+second line, <code>(2 to: 4)</code> is the number <code>467</code>. It starts at 2 because we
+added a <code>.</code> at the start of the line.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>generateNeighbors </span><span class="z-keyword">:=</span><span> [</span><span class="z-variable"> :numInterval</span><span class="z-variable"> :line</span><span> |</span></span>
+<span class="giallo-l"><span>	|</span><span class="z-variable z-other"> currentLine</span><span class="z-variable z-other"> previousLine</span><span class="z-variable z-other"> nextLine</span><span class="z-variable z-other"> start</span><span class="z-variable z-other"> end</span><span class="z-variable z-other"> result</span><span class="z-variable z-other"> number</span><span> |</span></span>
+<span class="giallo-l"><span>	previousLine </span><span class="z-keyword">:=</span><span> paddedLines at: (line </span><span class="z-keyword">-</span><span class="z-constant"> 1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	currentLine </span><span class="z-keyword">:=</span><span> paddedLines at: line</span><span>.</span></span>
+<span class="giallo-l"><span>	nextLine </span><span class="z-keyword">:=</span><span> paddedLines at: (line </span><span class="z-keyword">+</span><span class="z-constant"> 1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	start </span><span class="z-keyword">:=</span><span> (numInterval first) </span><span class="z-keyword">-</span><span class="z-constant"> 1</span><span>.</span></span>
+<span class="giallo-l"><span>	end </span><span class="z-keyword">:=</span><span> (numInterval last) </span><span class="z-keyword">+</span><span class="z-constant"> 1</span><span>.</span></span>
+<span class="giallo-l"><span>	number </span><span class="z-keyword">:=</span><span> (currentLine copyFrom: (numInterval first) </span></span>
+<span class="giallo-l"><span>		to: (numInterval last)) asNumber </span><span>.</span><span> </span></span>
+<span class="giallo-l"><span>	result </span><span class="z-keyword">:=</span><span> (previousLine copyFrom: start to: end)</span><span class="z-keyword">,</span></span>
+<span class="giallo-l"><span>		(currentLine at: start) asString </span><span class="z-keyword">,</span><span> </span></span>
+<span class="giallo-l"><span>		(nextLine  copyFrom: start to: end )</span><span class="z-keyword">,</span></span>
+<span class="giallo-l"><span>		(currentLine at: end) asString</span><span>.</span></span>
+<span class="giallo-l"><span>	{ number </span><span>.</span><span> result}</span></span>
+<span class="giallo-l"><span>	]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>numbers </span><span class="z-keyword">:=</span><span class="z-entity z-name"> OrderedCollection</span><span class="z-keyword"> new</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>numberRanges doWithIndex: </span><span>[</span><span class="z-variable"> :each</span><span class="z-variable"> :index</span><span> |</span></span>
+<span class="giallo-l"><span>	 each isNotEmpty</span></span>
+<span class="giallo-l"><span>	 ifTrue: </span><span>[</span><span>numbers add: (each collect: </span><span>[</span><span class="z-variable"> :n</span><span> |</span></span>
+<span class="giallo-l"><span>		(generateNeighbors </span><span class="z-support">value</span><span>: n </span><span class="z-support">value</span><span>: index)</span><span>]</span><span>)</span><span>]</span><span>]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>numbers</span></span></code></pre>
+<p>which gives:
+<img src="/img/day-3-part-1-2.png" alt="numbers with neighbors" /></p>
+<p>Now any pair that has only <code>.</code> as neighbors is rejected and we sum the rest:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>((numbers collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span></span>
+<span class="giallo-l"><span>	each reject: </span><span>[</span><span class="z-variable"> :e</span><span> |</span><span> (e at: </span><span class="z-constant">2</span><span>) matchesRegex: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">\.*</span><span class="z-punctuation z-definition z-string">&#39;</span><span>]</span></span>
+<span class="giallo-l"><span>		thenCollect: </span><span>[</span><span class="z-variable"> :e</span><span> |</span><span> e at: </span><span class="z-constant">1</span><span> ]</span><span>]</span><span>) flattened)</span></span>
+<span class="giallo-l"><span>	inject: </span><span class="z-constant">0</span><span> into: </span><span>[</span><span class="z-variable"> :sum</span><span class="z-variable"> :e</span><span> |</span><span> sum </span><span class="z-keyword">+</span><span> e </span><span>]</span></span></code></pre>
+<p>Replace the sample input with the real input and the part 1 is complete.</p>
+<h2 id="part-2">Part 2<a class="zola-anchor" href="#part-2" aria-label="Anchor link for: part-2" style="visibility: hidden;"></a>
+</h2>
+<p>In part 2, we need to find pair of numbers which share the same <code>*</code> as neighbor.
+Then we need to multiply those pair of numbers and add them all. It was easy
+enough to do this for sample input, but the real input has some edge cases which
+were harder to find. That is when I decided to represent the input as 2D grid
+and visualize it with Roassal.</p>
+<p>I found a 2D grid implementation on github, so we can use that. Evaluating the
+following should load it.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span class="z-entity z-name">Metacello</span><span class="z-keyword"> new</span></span>
+<span class="giallo-l"><span>  baseline: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">ContainersGrid</span><span class="z-punctuation z-definition z-string">&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>  repository: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">github://Ducasse/Containers-Grid/src</span><span class="z-punctuation z-definition z-string">&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>  load</span><span>.</span></span></code></pre>
+<p>The package provides a <code>CTGrid</code> class which we are going to subclass, because we
+will add some additional methods to it. Add a new class in your package named
+<code>Grid2D</code> which subclasses <code>CTGrid</code>. The code at this point looks like:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> padLines</span><span class="z-variable z-other"> paddedLines</span><span class="z-variable z-other"> grid</span><span> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">467..114..</span></span>
+<span class="giallo-l"><span class="z-string">...*......</span></span>
+<span class="giallo-l"><span class="z-string">..35..633.</span></span>
+<span class="giallo-l"><span class="z-string">......#...</span></span>
+<span class="giallo-l"><span class="z-string">617*......</span></span>
+<span class="giallo-l"><span class="z-string">.....+.58.</span></span>
+<span class="giallo-l"><span class="z-string">..592.....</span></span>
+<span class="giallo-l"><span class="z-string">......755.</span></span>
+<span class="giallo-l"><span class="z-string">...$.*....</span></span>
+<span class="giallo-l"><span class="z-string">.664.598..</span><span class="z-punctuation z-definition z-string">&#39;</span><span> lines</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>padLines </span><span class="z-keyword">:=</span><span> [</span><span class="z-variable"> :col</span><span> |</span></span>
+<span class="giallo-l"><span>	 |</span><span class="z-variable z-other"> paddedlineSize</span><span class="z-variable z-other"> padLine</span><span class="z-variable z-other"> result</span><span>|</span></span>
+<span class="giallo-l"><span>	paddedlineSize </span><span class="z-keyword">:=</span><span> (col first) </span><span class="z-support">size</span><span class="z-keyword"> +</span><span class="z-constant"> 2</span><span>.</span></span>
+<span class="giallo-l"><span>	padLine </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">&#39;</span><span> repeat: paddedlineSize </span><span>.</span></span>
+<span class="giallo-l"><span>	result </span><span class="z-keyword">:=</span><span> col collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-keyword">,</span><span>each</span><span class="z-keyword">,</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">.</span><span class="z-punctuation z-definition z-string">&#39;</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	result addFirst: padLine</span><span>.</span></span>
+<span class="giallo-l"><span>	result addLast: padLine </span><span>;</span><span> </span></span>
+<span class="giallo-l"><span class="z-keyword">		yourself</span><span>.</span></span>
+<span class="giallo-l"><span>	]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>paddedLines </span><span class="z-keyword">:=</span><span> padLines </span><span class="z-support">value</span><span>: input asOrderedCollection</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>grid </span><span class="z-keyword">:=</span><span class="z-entity z-name"> Grid2D</span><span> columns: ((paddedLines at: </span><span class="z-constant">1</span><span>) </span><span class="z-support">size</span><span>) rows: (paddedLines </span><span class="z-support">size</span><span>)</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>paddedLines doWithIndex:  </span><span>[</span><span class="z-variable"> :each</span><span class="z-variable"> :row</span><span> |</span></span>
+<span class="giallo-l"><span>	each doWithIndex: </span><span>[</span><span class="z-variable"> :e</span><span class="z-variable"> :col</span><span> |</span></span>
+<span class="giallo-l"><span>		grid atRow: row atColumn: col put: e</span><span>]</span><span> ]</span><span>.</span></span></code></pre>
+<p>We pad the lines as we did in part 1, then initialize a grid with the data. The
+grid in the inspector looks like:</p>
+<p><img src="/img/day-3-part-2-1.png" alt="grid inspector without roassal" /></p>
+<p>That's not how a grid should look. This is where Roassal comes in. Use the main
+menu <code>Library &gt; Roassal3 &gt; Load &gt; Load full version</code> to load Roassal. Then add a
+method <code>visualize</code> to our <code>Grid2D</code> class. The actual name of the method could be
+anything, what matters is that it returns an instance of <code>RCanvas</code>'s canvas.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>visualize</span></span>
+<span class="giallo-l"><span> 	|</span><span class="z-variable z-other"> c</span><span> |</span></span>
+<span class="giallo-l"><span>	c </span><span class="z-keyword">:=</span><span class="z-entity z-name"> RSCanvas</span><span class="z-keyword"> new</span><span>.</span></span>
+<span class="giallo-l"><span class="z-storage">	self</span><span> withIndicesDo:  </span><span>[</span><span class="z-variable"> :each</span><span class="z-variable"> :row</span><span class="z-variable"> :col</span><span> |</span><span> </span></span>
+<span class="giallo-l"><span>		|</span><span class="z-variable z-other"> circle</span><span class="z-variable z-other"> labeledCircle</span><span> |</span></span>
+<span class="giallo-l"><span>		circle </span><span class="z-keyword">:=</span><span class="z-entity z-name">  RSCircle</span><span class="z-keyword"> new</span><span class="z-support"> size</span><span>: </span><span class="z-constant">30</span><span>.</span></span>
+<span class="giallo-l"><span>		circle </span><span class="z-keyword">@</span><span> (</span><span class="z-entity z-name">RSPopup</span><span class="z-keyword"> new</span></span>
+<span class="giallo-l"><span>		text: </span><span>[</span><span class="z-variable"> :e</span><span> |</span><span> row</span><span class="z-keyword">@</span><span>col</span><span>]</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">		yourself</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>		circle color: </span><span class="z-entity z-name">Color</span><span> pink muchLighter</span><span>.</span></span>
+<span class="giallo-l"><span>		labeledCircle </span><span class="z-keyword">:=</span><span> { circle </span><span>.</span><span class="z-entity z-name"> RSLabel</span><span class="z-keyword"> new</span><span> color: </span><span class="z-entity z-name">Color</span><span> black</span><span>;</span><span> text: each } </span></span>
+<span class="giallo-l"><span>			asGroup asShapeFor: each</span><span>.</span></span>
+<span class="giallo-l"><span>		c add: labeledCircle </span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">	RSGridLayout</span><span class="z-keyword"> new</span><span> lineItemsCount: </span><span class="z-storage">self</span><span> rowCount </span><span>;</span><span> on: c shapes</span><span>.</span></span>
+<span class="giallo-l"><span>	c </span><span class="z-keyword">@</span><span class="z-entity z-name"> RSCanvasController</span><span>.</span></span>
+<span class="giallo-l"><span class="z-keyword">	^</span><span> c canvas</span></span></code></pre>
+<p>This gives a much better result. The output is interactive and we could zoom and
+pan around.</p>
+<p><img src="/img/day-3-part-2-2.png" alt="grid visualized" /></p>
+<p>We could do better, let's add another method <code>visualizeWithHighlight</code> to
+<code>Grid2D</code>:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>visualizeWithHighlight: aBlock</span></span>
+<span class="giallo-l"><span>	|</span><span class="z-variable z-other"> c</span><span> |</span></span>
+<span class="giallo-l"><span>	c </span><span class="z-keyword">:=</span><span class="z-entity z-name"> RSCanvas</span><span class="z-keyword"> new</span><span>.</span></span>
+<span class="giallo-l"><span class="z-storage">	self</span><span> withIndicesDo:  </span><span>[</span><span class="z-variable"> :each</span><span class="z-variable"> :row</span><span class="z-variable"> :col</span><span> |</span><span> </span></span>
+<span class="giallo-l"><span>		|</span><span class="z-variable z-other"> circle</span><span class="z-variable z-other"> labeledCircle</span><span> |</span></span>
+<span class="giallo-l"><span>		circle </span><span class="z-keyword">:=</span><span class="z-entity z-name">  RSCircle</span><span class="z-keyword"> new</span><span class="z-support"> size</span><span>: </span><span class="z-constant">30</span><span>.</span></span>
+<span class="giallo-l"><span>		circle </span><span class="z-keyword">@</span><span> (</span><span class="z-entity z-name">RSPopup</span><span class="z-keyword"> new</span></span>
+<span class="giallo-l"><span>		text: </span><span>[</span><span class="z-variable"> :e</span><span> |</span><span> row</span><span class="z-keyword">@</span><span>col</span><span>]</span><span>;</span></span>
+<span class="giallo-l"><span class="z-keyword">		yourself</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>		circle color: (aBlock </span><span class="z-support">value</span><span>: each)</span><span>.</span></span>
+<span class="giallo-l"><span>		labeledCircle </span><span class="z-keyword">:=</span><span> { circle </span><span>.</span><span class="z-entity z-name"> RSLabel</span><span class="z-keyword"> new</span><span> color: </span><span class="z-entity z-name">Color</span><span> black</span><span>;</span><span> text: each } </span></span>
+<span class="giallo-l"><span>		    asGroup asShapeFor: each</span><span>.</span></span>
+<span class="giallo-l"><span>		c add: labeledCircle </span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span class="z-entity z-name">	RSGridLayout</span><span class="z-keyword"> new</span><span> lineItemsCount: </span><span class="z-storage">self</span><span> rowCount </span><span>;</span><span> on: c shapes</span><span>.</span></span>
+<span class="giallo-l"><span>	c </span><span class="z-keyword">@</span><span class="z-entity z-name"> RSCanvasController</span><span>.</span></span>
+<span class="giallo-l"><span class="z-keyword">	^</span><span> c canvas</span></span></code></pre>
+<p>Everything is same except we pass a block which sets the color of the circle.
+This lets the caller decide which color to use for each circle. For example, if
+we wanted to highlight each <code>*</code> on the grid, we could do:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>grid visualizeWithHighlight: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> each </span><span class="z-keyword">=</span><span class="z-constant"> $*</span></span>
+<span class="giallo-l"><span>	ifTrue: </span><span>[</span><span class="z-entity z-name"> Color</span><span> pink </span><span>]</span></span>
+<span class="giallo-l"><span>	ifFalse: </span><span>[</span><span class="z-entity z-name"> Color</span><span> pink muchLighter </span><span>]</span><span> ]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-3.png" alt="star highlighted in grid" /></p>
+<p>If we change the highlight color to red and switch input with real input, then
+the <code>*</code>'s on real input looks like:</p>
+<p><img src="/img/day-3-part-2-4.png" alt="the real grid highlighted" /></p>
+<p>You can zoom in and out and pan as usual. Mouse over gives me the
+actual location of the cell.</p>
+<p><img src="/img/day-3-part-2-5.png" alt="grid zoomed in" /></p>
+<p>Also added a <code>at:</code> method to <code>Grid2D</code> which takes a point like <code>1@1</code> and gives
+us the item there:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>at: aPoint</span></span>
+<span class="giallo-l"><span>	aPoint isPoint ifTrue: </span><span>[</span><span class="z-keyword">^</span><span class="z-storage"> self</span><span> atRow: aPoint x atColumn: aPoint y </span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span class="z-keyword">	^</span><span class="z-storage"> self</span><span> contents at: aPoint </span></span></code></pre>
+<p>Enough about visualization, let's get back to the puzzle.</p>
+<p>First helper function we need is called <code>readNumberAt</code>. Given a point on the
+grid with a digit, This function returns the whole number by combining
+consecutive digits on the left or right.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>readNumberAt </span><span class="z-keyword">:=</span><span> [</span><span class="z-variable"> :pos</span><span class="z-variable"> :aGrid</span><span> |</span><span> </span></span>
+<span class="giallo-l"><span>	|</span><span class="z-variable z-other"> result</span><span class="z-variable z-other"> lPos</span><span class="z-variable z-other"> rPos</span><span> |</span></span>
+<span class="giallo-l"><span>	lPos </span><span class="z-keyword">:=</span><span> pos </span><span class="z-keyword">-</span><span> (</span><span class="z-constant">0</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	rPos </span><span class="z-keyword">:=</span><span> pos </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">0</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	result </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-punctuation z-definition z-string">&#39;</span><span>.</span></span>
+<span class="giallo-l"><span>	[</span><span>(aGrid at: pos) isDigit </span><span class="z-keyword">&amp;</span><span> ((aGrid at: lPos) isDigit)</span><span>]</span><span> whileTrue: </span></span>
+<span class="giallo-l"><span>		[</span><span>result </span><span class="z-keyword">:=</span><span> (aGrid at: lPos) asString </span><span class="z-keyword">,</span><span>  result</span><span>.</span></span>
+<span class="giallo-l"><span>		lPos </span><span class="z-keyword">:=</span><span> lPos </span><span class="z-keyword">-</span><span> (</span><span class="z-constant">0</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>)</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	(aGrid at: pos) isDigit ifTrue: </span></span>
+<span class="giallo-l"><span>		[</span><span>result </span><span class="z-keyword">:=</span><span> result </span><span class="z-keyword">,</span><span> (aGrid at: pos) asString</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	[</span><span>(aGrid at: pos) isDigit </span><span class="z-keyword">&amp;</span><span> (aGrid at: rPos) isDigit</span><span>]</span><span> whileTrue:</span></span>
+<span class="giallo-l"><span>		[</span><span>result </span><span class="z-keyword">:=</span><span> result </span><span class="z-keyword">,</span><span> (aGrid at: rPos) asString</span><span>.</span></span>
+<span class="giallo-l"><span>		rPos </span><span class="z-keyword">:=</span><span> rPos </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">0</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>)</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span></span>
+<span class="giallo-l"><span>]</span><span>.</span></span></code></pre>
+<p>Another helper is a <code>neighbors</code> fucntion, which gives eight neighbors of a point
+on grid. I am aware of the <code>eightNeighbors</code> method of the <code>Point</code> class which is
+part of the standard library. But it is problemetic for us, because it starts
+from the point directly below and goes anticlockwise. If a 2 digit number is at
+our lower left side, then the digtis will get split up. We don't want that,
+hence our own <code>neighbors</code> function. It starts from upper left corner and goes
+clockwise:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>neighbors </span><span class="z-keyword">:=</span><span> [</span><span class="z-variable"> :aPoint</span><span> |</span><span> </span></span>
+<span class="giallo-l"><span>	{ {aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">-1</span><span class="z-keyword"> @</span><span class="z-constant"> -1</span><span>) </span><span>.</span><span> aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">-1</span><span class="z-keyword"> @</span><span class="z-constant"> 0</span><span>) </span><span>.</span><span> aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">-1</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>)} </span></span>
+<span class="giallo-l"><span>	.</span><span> aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">0</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>) </span><span>.</span><span> {aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">1</span><span class="z-keyword"> @</span><span class="z-constant"> 1</span><span>) </span><span>.</span><span> aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">1</span><span class="z-keyword"> @</span><span class="z-constant"> 0</span><span>) </span></span>
+<span class="giallo-l"><span>	.</span><span> aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">1</span><span class="z-keyword"> @</span><span class="z-constant"> -1</span><span>) }</span><span>.</span><span> aPoint </span><span class="z-keyword">+</span><span> (</span><span class="z-constant">0</span><span class="z-keyword"> @</span><span class="z-constant"> -1</span><span>) } </span><span>]</span><span>.</span></span></code></pre>
+<p>We go around the grid and collect each star's location:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>stars </span><span class="z-keyword">:=</span><span class="z-entity z-name"> OrderedCollection</span><span class="z-keyword"> new</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>grid withIndicesDo: </span><span>[</span><span class="z-variable"> :each</span><span class="z-variable"> :row</span><span class="z-variable"> :col</span><span> |</span></span>
+<span class="giallo-l"><span>	(each </span><span class="z-keyword">=</span><span class="z-constant"> $*</span><span>) ifTrue: </span><span>[</span><span>stars add: row</span><span class="z-keyword">@</span><span>col</span><span>]</span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-6.png" alt="sample input stars" /></p>
+<p>Then we go around each star and collect numbers which are in their neighborhood:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers </span><span class="z-keyword">:=</span><span> (stars collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> neighbors </span><span class="z-support">value</span><span>: each</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>	collect: </span><span>[</span><span class="z-variable">:e</span><span> |</span><span> </span></span>
+<span class="giallo-l"><span>		{ (e at: </span><span class="z-constant">1</span><span>) collect: </span><span>[</span><span class="z-variable">:top</span><span> |</span><span> readNumberAt </span><span class="z-support">value</span><span>: top </span><span class="z-support">value</span><span>: grid</span><span>]</span></span>
+<span class="giallo-l"><span>		.</span><span> readNumberAt </span><span class="z-support">value</span><span>: (e at: </span><span class="z-constant">2</span><span>) </span><span class="z-support">value</span><span>: grid </span></span>
+<span class="giallo-l"><span>		.</span><span> (e at: </span><span class="z-constant">3</span><span>) collect: </span><span>[</span><span class="z-variable">:bottom</span><span> |</span><span> readNumberAt </span><span class="z-support">value</span><span>: bottom </span><span class="z-support">value</span><span>: grid</span><span>]</span></span>
+<span class="giallo-l"><span>		.</span><span> readNumberAt </span><span class="z-support">value</span><span>: (e at: </span><span class="z-constant">4</span><span>) </span><span class="z-support">value</span><span>: grid} flattened</span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-7.png" alt="sample numbers with star" /></p>
+<p>Notice how if 2 digits are neighbors of <code>*</code> then they get collected twice.
+Luckily they will always be adjacent so getting rid of them is not that hard.
+The naive version, by using <code>asSet</code> gets in trouble because one of the pairs are
+same numbers, and they are both at the top too. But the distinguishing factor
+is, they will have a space between them as a <code>.</code>.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers </span><span class="z-keyword">:=</span><span> starsWithNumbers collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span></span>
+<span class="giallo-l"><span>		|</span><span class="z-variable z-other"> result</span><span> |</span></span>
+<span class="giallo-l"><span>		result </span><span class="z-keyword">:=</span><span class="z-entity z-name"> OrderedCollection</span><span class="z-keyword"> new</span><span>.</span></span>
+<span class="giallo-l"><span>		each do: </span><span>[</span><span class="z-variable"> :x</span><span> |</span></span>
+<span class="giallo-l"><span>			result isEmpty ifTrue: </span><span>[</span><span> result add: x</span><span>]</span></span>
+<span class="giallo-l"><span>			ifFalse: </span><span>[</span><span>(result last) </span><span class="z-keyword">=</span><span> x ifFalse: </span><span>[</span><span>result add: x</span><span>]</span><span>]</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>		result</span><span>]</span><span>.</span></span></code></pre>
+<p>This gets rid of the duplicates but keeps the same numbers if they appear as
+pair.</p>
+<p><img src="/img/day-3-part-2-8.png" alt="duplicates gone" /></p>
+<p>Now we need to get rid of blanks and the stars with single number as neighbor:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers </span><span class="z-keyword">:=</span><span> (starsWithNumbers collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span></span>
+<span class="giallo-l"><span>		each reject: </span><span>[</span><span class="z-variable"> :e</span><span> |</span><span> e </span><span class="z-keyword">=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-punctuation z-definition z-string">&#39;</span><span> ]</span></span>
+<span class="giallo-l"><span>		thenCollect: </span><span>[</span><span class="z-variable">:e</span><span> |</span><span> e asNumber</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>		select: </span><span>[</span><span class="z-variable"> :e</span><span> |</span><span> (e </span><span class="z-support">size</span><span>) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 1</span><span> ]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-9.png" alt="pairs are ready" /></p>
+<p>The data is finally in the desired shape. Reduce them with:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers inject: </span><span class="z-constant">0</span><span> into: </span><span>[</span><span class="z-variable"> :sum</span><span class="z-variable"> :e</span><span> |</span><span> ((e at: </span><span class="z-constant">1</span><span>) </span><span class="z-keyword">*</span><span> (e at: </span><span class="z-constant">2</span><span>)) </span><span class="z-keyword">+</span><span> sum </span><span>]</span><span>.</span></span></code></pre>
+<p>And we are finished. The source is at the repository available at
+https://github.com/nsrahmad/AdventOfCode2023 .</p>
+<p>This was harder than usual because how useless the sample input was. Every edge
+case was in the actual input rather than in the sample. I really hated that at
+first but after finishing it, It didn't feel that bad after all.</p>
+<p>Reminds me of my favorite quote from "Ender's Game" by  Orson Scott Card:</p>
+<blockquote>
+<p>“In the moment when I truly understand my enemy, understand him well enough to
+defeat him, then in that very moment I also love him. I think it’s impossible
+to really understand somebody, what they want, what they believe, and not love
+them the way they love themselves. And then, in that very moment when I love
+them.... I destroy them.”</p>
+</blockquote>
+<p>I guess it is also true of software bugs and hard puzzles. See you soon.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    <a hidden rel="me" href="https://privacysafe.social/@nsrahmad">Mastodon</a>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3b2ad4933163428581689380621df0af"}'></script><!-- End Cloudflare Web Analytics -->
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>

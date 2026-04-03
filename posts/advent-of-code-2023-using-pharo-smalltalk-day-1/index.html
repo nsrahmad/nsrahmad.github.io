@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Writings about stuff">
+
+  <title>Advent of Code 2023 Using Pharo Smalltalk Day 1</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#day-1-part-1">Day 1 - Part 1</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#day-1-part-2">Day 1 - Part 2</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Advent of Code 2023 Using Pharo Smalltalk Day 1</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Dec 1, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://nsrahmad.github.io/tags/smalltalk"><span>#</span>smalltalk</a><a class="instant" href="https://nsrahmad.github.io/tags/programming"><span>#</span>programming</a><a class="instant" href="https://nsrahmad.github.io/tags/adventofcode"><span>#</span>AdventOfCode</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        <blockquote id="outdate_alert" class="callout caution hidden" data-days="30"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <p>I will do this year's Advent of Code challeges in Pharo Smalltalk. Let's see
+how far I can go with it.</p>
+<h2 id="day-1-part-1">Day 1 - Part 1<a class="zola-anchor" href="#day-1-part-1" aria-label="Anchor link for: day-1-part-1" style="visibility: hidden;"></a>
+</h2>
+<p>Here is the sample input for the first part of the puzzle:</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>1abc2</span></span>
+<span class="giallo-l"><span>pqr3stu8vwx</span></span>
+<span class="giallo-l"><span>a1b2c3d4e5f</span></span>
+<span class="giallo-l"><span>treb7uchet</span></span></code></pre>
+<p>Our task here is to extract the first digit and the last digit to form a single
+two digit number. For the four sample lines, these numbers will be 12, 38, 15,
+and 77. The answer to the puzzle is the sum of all these numbers, 142 in this
+case.</p>
+<p>well, Its time to start our pharo 11 vm.</p>
+<p><img src="/img/day-1-playground.png" alt="The playground in Pharo Smalltalk" /></p>
+<p>Let's get Petit Parser into our image from
+<a rel="nofollow noreferrer external" href="https://github.com/kursjan/petitparser2">Github</a>. Enter the following in the
+playground and "Do it" :</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span class="z-entity z-name">Metacello</span><span class="z-keyword"> new</span></span>
+<span class="giallo-l"><span>    baseline: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">PetitParser2</span><span class="z-punctuation z-definition z-string">&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>    repository: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">github://kursjan/petitparser2</span><span class="z-punctuation z-definition z-string">&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>    load</span><span>.</span></span></code></pre>
+<p>This will install the Petit parser 2. I spent some time playing with the
+<a rel="nofollow noreferrer external" href="https://kursjan.github.io/petitparser2/">documentaion</a> to learn the basics. The
+first step is trying to parse all digits:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> parser</span><span class="z-variable z-other">  parseResult</span><span> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">1abc2</span></span>
+<span class="giallo-l"><span class="z-string">pqr3stu8vwx</span></span>
+<span class="giallo-l"><span class="z-string">a1b2c3d4e5f</span></span>
+<span class="giallo-l"><span class="z-string">treb7uchet</span><span class="z-punctuation z-definition z-string">&#39;</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>parser </span><span class="z-keyword">:=</span><span class="z-constant"> #</span><span class="z-constant">digit</span><span> asParser</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>parseResult </span><span class="z-keyword">:=</span><span> parser matchesIn: input</span><span>.</span></span></code></pre>
+<p>which recognises all digits in the give input:</p>
+<p><img src="/img/day-1-first-digits.png" alt="The digits in input" /></p>
+<p>Update our <code>parser</code> to also recognise new line:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>parser </span><span class="z-keyword">:=</span><span class="z-constant"> #</span><span class="z-constant">digit</span><span> asParser </span><span class="z-keyword">/</span><span class="z-constant"> #</span><span class="z-constant">space</span><span> asParser</span><span>.</span></span></code></pre>
+<p><img src="/img/day-1-eol.png" alt="Also recognise End of Line" /></p>
+<p>There is probably a better and faster way of doing this with Petit Parser
+itself, but let's stop using it and try the collections API to do the rest.</p>
+<p>First, Separate digits by line.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>parseResult splitOn: </span><span class="z-entity z-name">Character</span><span class="z-support"> cr</span><span>.</span></span></code></pre>
+<p>and we have a collection of digits per line of input.</p>
+<p><img src="/img/day-1-lines.png" alt="digits per line" /></p>
+<p>I made a mistake here of not assigning the result of <code>splitOn</code> to the variable
+and spent few minutes wondering about it. It is very easy to step through and
+fix the mistake.</p>
+<p>To make a single two digit number, first concatenate the first and last
+characters in each line (pharo uses <code>,</code> to join strings) and then cast
+it as a number:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>asNumbers </span><span class="z-keyword">:=</span><span> parseResult collect:</span></span>
+<span class="giallo-l"><span>	[</span><span class="z-variable"> :each</span><span> |</span><span> ((each first asString)</span><span class="z-keyword">,</span><span> (each last asString)) asNumber </span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-1-single-number.png" alt="a single two digit number" /></p>
+<p><code>inject: into:</code> reduces/folds <code>asNumbers</code> to the sum of all elements.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>asNumbers inject: </span><span class="z-constant">0</span><span> into: </span><span>[</span><span class="z-variable"> :sum</span><span class="z-variable"> :each</span><span> |</span><span> sum </span><span class="z-keyword">+</span><span> each </span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-1-reduce.png" alt="finally the result" /></p>
+<p>Looks good. Now download the <code>input.txt</code> into the same directory where the
+pharo image is for simple lookup, because that is our current working directory
+in pharo. And replace the sample input with actual input.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>input </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">input.txt</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asFileReference readStreamDo:</span></span>
+<span class="giallo-l"><span>	[</span><span class="z-variable"> :stream</span><span> |</span><span> stream upToEnd  </span><span>]</span><span>.</span></span></code></pre>
+<p>this required few additional tweaks, like the line ending of the file was
+<code>Charactel lf</code>, and there was an extra empty collection at the end of file. But
+since we can always see the result, it was pretty easy to fix.</p>
+<p><img src="/img/day-1-part-1-final.png" alt="well the actual final result" /></p>
+<p>This concludes part 1.</p>
+<h2 id="day-1-part-2">Day 1 - Part 2<a class="zola-anchor" href="#day-1-part-2" aria-label="Anchor link for: day-1-part-2" style="visibility: hidden;"></a>
+</h2>
+<p>The sample input for second part is :</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>two1nine</span></span>
+<span class="giallo-l"><span>eightwothree</span></span>
+<span class="giallo-l"><span>abcone2threexyz</span></span>
+<span class="giallo-l"><span>xtwone3four</span></span>
+<span class="giallo-l"><span>4nineeightseven2</span></span>
+<span class="giallo-l"><span>zoneight234</span></span>
+<span class="giallo-l"><span>7pqrstsixteen</span></span></code></pre>
+<p>The end goal is still the same, but numbers in words like <code>one</code>,<code>two</code>,<code>three</code>
+etc. are also counted as single digits. Accepted results for the input are 29,
+83, 13, 24, 42, 14, and 76. Adding these together produces 281.</p>
+<p>Trying to recognise words from <code>one</code> to <code>nine</code>:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>wordDigit </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">one</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">two</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">three</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">four</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">five</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">six</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">seven</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">eight</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">nine</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>wordDigit matchesIn: input</span><span>.</span></span></code></pre>
+<p>This gives:
+<img src="/img/day-1-part2-1.png" alt="parsing the words" /></p>
+<p>One interesting case is <code>eightwothree</code>. should we treat it as <code>eight</code>, <code>wo</code>,
+<code>three</code> or <code>eight</code>, <code>two</code>, <code>three</code>. Since the result is knows to be 83, lets go
+with the first choice here. Instead of using <code>matchesIn:</code> , we will use
+<code>matchesSkipIn:</code>, which doesn't recognise partially overlapping words.
+<img src="/img/day-1-part2-2.png" alt="skip the partial words" /></p>
+<p>we can just combine this parser with the digit and space parsers from part 1:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>parser </span><span class="z-keyword">:=</span><span> (wordDigit </span><span class="z-keyword">/</span><span class="z-constant"> #</span><span class="z-constant">digit</span><span> asParser) </span><span class="z-keyword">/</span><span class="z-constant"> #</span><span class="z-constant">space</span><span> asParser</span><span>.</span></span>
+<span class="giallo-l"><span>parser matchesSkipIn: input</span><span>.</span></span></code></pre>
+<p><img src="/img/day-1-part2-3.png" alt="the whole parser" /></p>
+<p>If we could replace the words with corresponding characters, the rest will be
+the same as part 1. Petit parser makes it really easy. To replace <code>two</code> with
+<code>$2</code>, we can just transform it as:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">two` asParser ==&gt; [:str | $2]</span></span></code></pre>
+<p><img src="/img/day-1-part2-4.png" alt="replace two with 2" /></p>
+<p>The block takes <code>two</code> as parameter. we ignore it simply return <code>$2</code>
+(character literal). We shouldn't try to convert it to a number just yet. Since
+this works, do this to all words.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>wordDigit </span><span class="z-keyword">:=</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">one</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $1</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">two</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $2</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">three</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $3</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">four</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $4</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">five</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $5</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">six</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $6</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">seven</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $7</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">eight</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :str</span><span> |</span><span class="z-constant"> $8</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">nine</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable">:str</span><span> |</span><span class="z-constant"> $9</span><span>]</span><span>)</span><span>.</span></span></code></pre>
+<p><img src="/img/day-1-part2-5.png" alt="replace all words" /></p>
+<p>And rest of the problem is same as part 1.</p>
+<p><img src="/img/day-1-part2-6.png" alt="rest of the problem" /></p>
+<p><code>281</code> is the expected answer. So trying this with the actual <code>input.txt</code>:
+<img src="/img/day-1-part2-7.png" alt="the final answer" /></p>
+<p>The answer is rejected as incorrect. I spent going over everything and can't
+find anything wrong at all. Finally I turned to Reddit, and the top post at AOC
+subreddit mentioned the partial case, that <code>eightwothree</code> should be treated as
+<code>eight</code>, <code>two</code> and <code>three</code>. Felt an oversight, but on second thought, something
+happening in real life all the time. All we have to do is use <code>matchesIn:</code>
+instead of <code>matchesSkipIn:</code>.</p>
+<p><img src="/img/day-1-part2-8.png" alt="lol the acutal final answer" /></p>
+<p>And the answer is accepted. We are done for the day. See you tomorrow.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    <a hidden rel="me" href="https://privacysafe.social/@nsrahmad">Mastodon</a>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3b2ad4933163428581689380621df0af"}'></script><!-- End Cloudflare Web Analytics -->
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>

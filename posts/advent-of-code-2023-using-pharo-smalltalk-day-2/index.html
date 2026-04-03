@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  
+    
+  
+  <meta name="description" content="Writings about stuff">
+
+  <title>Advent of Code 2023 Using Pharo Smalltalk Day 2</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  
+  <style>
+
+  /* light mode colors */
+  body {
+    --primary-color: #5871a2;
+    --primary-pale-color: #5871a233;
+    --primary-decoration-color: #5871a210;
+    --bg-color: #ffffff;
+    --text-color: #2f3030;
+    --text-pale-color: #767676;
+    --text-decoration-color: #a9a9a9;
+    --highlight-mark-color: #5f75b020;
+
+    --callout-note-color: #5871a2;
+    --callout-tip-color: #268556;
+    --callout-important-color: #885fc9;
+    --callout-warning-color: #ab6632;
+    --callout-caution-color: #c64e4e;
+  }
+
+  /* dark mode colors */
+  body.dark {
+    --primary-color: #6f8fd1;
+    --primary-pale-color: #6f8fd166;
+    --primary-decoration-color: #6f8fd112;
+    --bg-color: #1c1c1c;
+    --text-color: #c1c1c1;
+    --text-pale-color: #848484;
+    --text-decoration-color: #5f5f5f;
+    --highlight-mark-color: #8296cb3b;
+
+    --callout-note-color: #6f8fd1;
+    --callout-tip-color: #47976f;
+    --callout-important-color: #9776cd;
+    --callout-warning-color: #ad7a52;
+    --callout-caution-color: #d06161;
+  }
+
+  /* typography */
+  body {
+    --main-font: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 16px;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+  
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#day-2-part-1">Day 2 - Part 1</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#day-2-part-2">Day 2 - part 2</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https:&#x2F;&#x2F;nsrahmad.github.io&#x2F;posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2000&#x2F;svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;&#x2F;path&gt;&lt;&#x2F;svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Advent of Code 2023 Using Pharo Smalltalk Day 2</h1>
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Dec 2, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://nsrahmad.github.io/tags/smalltalk"><span>#</span>smalltalk</a><a class="instant" href="https://nsrahmad.github.io/tags/programming"><span>#</span>programming</a><a class="instant" href="https://nsrahmad.github.io/tags/adventofcode"><span>#</span>AdventOfCode</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        <blockquote id="outdate_alert" class="callout caution hidden" data-days="30"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <p>Yesterday's solution already looks facepalm worthy even though its been only
+24 hours since. Hopefully today's parsing code will be better. Let's do this.</p>
+<h2 id="day-2-part-1">Day 2 - Part 1<a class="zola-anchor" href="#day-2-part-1" aria-label="Anchor link for: day-2-part-1" style="visibility: hidden;"></a>
+</h2>
+<p>Sample input for the first part is :</p>
+<pre class="giallo z-code"><code data-lang="plain"><span class="giallo-l"><span>Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green</span></span>
+<span class="giallo-l"><span>Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue</span></span>
+<span class="giallo-l"><span>Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red</span></span>
+<span class="giallo-l"><span>Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red</span></span>
+<span class="giallo-l"><span>Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green</span></span></code></pre>
+<p>The games are numbered and each game has multiple sets separated by <code>;</code> with
+colored cubes taken from a bag. The condition is that maximum <code>12 red</code>, <code>13 green</code> and <code>14 blue</code> cubes are allowed. So if any set in a game exceeds this
+limit, the game becomes invalid. We have to calculate the sum of <code>id</code>'s of valid
+games. With the sample input, games 3 (20 red) and 4 (15 blue) are rejected and
+sum of <code>id</code>'s of the remaining games is <code>8</code>.</p>
+<p>We could take a shortcut here without parsing everything, but the unknown part
+2 might become harder, So it is better to just parse everything to proper data
+structures.</p>
+<p>We will continue with the same image we used [yesterday]({{&lt; ref
+"advent-of-code-2023-using-pharo-smalltalk-day-1" &gt;}}), which already has
+PetitParser loaded in it. Open a new playground get the sample input in it:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green</span></span>
+<span class="giallo-l"><span class="z-string">Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue</span></span>
+<span class="giallo-l"><span class="z-string">Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red</span></span>
+<span class="giallo-l"><span class="z-string">Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red</span></span>
+<span class="giallo-l"><span class="z-string">Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green</span><span class="z-punctuation z-definition z-string">&#39;</span><span>.</span></span></code></pre>
+<p>Let's build up our parser.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> aColor</span><span> |</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">&quot;</span><span class="z-comment">omitted</span><span class="z-punctuation z-definition z-comment">&quot;</span></span>
+<span class="giallo-l"><span>aColor </span><span class="z-keyword">:=</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">red</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">green</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-keyword">	/</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">blue</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :c</span><span> |</span><span class="z-entity z-name"> Color</span><span> named: c </span><span>]</span><span> .</span></span></code></pre>
+<p>We are not just matching color words but also transforming the result as actual
+color objects:</p>
+<p><img src="/img/day-2-part1-1.png" alt="day 2 color match" /></p>
+<p><code>anInteger</code> matches and transforms an integer number:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> aColor</span><span class="z-variable z-other"> anInteger</span><span> |</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">&quot;</span><span class="z-comment">omitted</span><span class="z-punctuation z-definition z-comment">&quot;</span></span>
+<span class="giallo-l"><span>anInteger </span><span class="z-keyword">:=</span><span class="z-constant"> #</span><span class="z-constant">digit</span><span> asParser plus token flatten </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :d</span><span> |</span><span> d asNumber </span><span>]</span><span>.</span></span></code></pre>
+<p><code>aCube</code> is just a number with a color:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> aColor</span><span class="z-variable z-other"> anInteger</span><span class="z-variable z-other"> aCube</span><span> |</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">&quot;</span><span class="z-comment">omitted</span><span class="z-punctuation z-definition z-comment">&quot;</span></span>
+<span class="giallo-l"><span>aCube </span><span class="z-keyword">:=</span><span> anInteger </span><span class="z-keyword">,</span><span> aColor trim</span><span>.</span></span></code></pre>
+<p><code>trim</code> is used to also match surrounding whitespace. <code>aSet</code> and <code>aGame</code> are
+slightly more involved, but they are built incrementally with rapid feedback.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> aColor</span><span class="z-variable z-other"> anInteger</span><span class="z-variable z-other"> aCube</span><span class="z-variable z-other"> aSet</span><span class="z-variable z-other"> aGame</span><span> |</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">&quot;</span><span class="z-comment">omitted</span><span class="z-punctuation z-definition z-comment">&quot;</span></span>
+<span class="giallo-l"><span>aSet </span><span class="z-keyword">:=</span><span> ((aCube </span><span class="z-keyword">,</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">,</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser trim optional </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable">:c</span><span> |</span><span> c allButLast</span><span>]</span><span>) plus</span></span>
+<span class="giallo-l"><span class="z-keyword">	,</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">;</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser optional) </span><span class="z-keyword">=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable"> :set</span><span> |</span><span> set at: </span><span class="z-constant">1</span><span> ]</span><span>.</span></span>
+<span class="giallo-l"><span>aGame </span><span class="z-keyword">:=</span><span> (</span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">Game </span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser</span><span class="z-keyword">,</span><span> anInteger </span><span class="z-keyword">,</span><span class="z-punctuation z-definition z-string"> &#39;</span><span class="z-string">:</span><span class="z-punctuation z-definition z-string">&#39;</span><span> asParser)</span></span>
+<span class="giallo-l"><span class="z-keyword">	=</span><span class="z-keyword">=</span><span class="z-keyword">&gt;</span><span> [</span><span class="z-variable">:game</span><span> |</span><span> game at: </span><span class="z-constant">2</span><span>]</span><span class="z-keyword">,</span><span> aSet trim plus</span><span>.</span></span></code></pre>
+<p>Unlike yesterday, we are not just matching stuff but also using transformers to
+get rid of <code>,</code>, <code>;</code>,<code>Game</code> and <code>:</code> etc. with this the parsing is complete.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>aGame  matchesSkipIn: input</span></span></code></pre>
+<p><img src="/img/day-2-part1-2.png" alt="parse output" /></p>
+<p>Put the parsed result in <code>gamesCollection</code> variable</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> aColor</span><span class="z-variable z-other"> anInteger</span><span class="z-variable z-other"> aCube</span><span class="z-variable z-other"> aSet</span><span class="z-variable z-other"> aGame</span><span class="z-variable z-other"> gamesCollection</span><span> |</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">&quot;</span><span class="z-comment">omitted</span><span class="z-punctuation z-definition z-comment">&quot;</span></span>
+<span class="giallo-l"><span>gamesCollection </span><span class="z-keyword">:=</span><span> (aGame  matchesSkipIn: input)</span><span>.</span></span></code></pre>
+<p>Now to solve the puzzle we need to know whats the maximum number of cubes of
+each color are in a game.</p>
+<p>I defined a block function (lambda / anonymous function equivalent) which we
+store in another variable.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>|</span><span class="z-variable z-other"> input</span><span class="z-variable z-other"> aColor</span><span class="z-variable z-other"> anInteger</span><span class="z-variable z-other"> aCube</span><span class="z-variable z-other"> aSet</span><span class="z-variable z-other"> aGame</span><span class="z-variable z-other"> gamesCollection</span><span class="z-variable z-other"> maxRGBinSingleGame</span><span> |</span></span>
+<span class="giallo-l"><span class="z-punctuation z-definition z-comment">&quot;</span><span class="z-comment">omitted</span><span class="z-punctuation z-definition z-comment">&quot;</span></span>
+<span class="giallo-l"><span>maxRGBinSingleGame </span><span class="z-keyword">:=</span><span> [</span><span class="z-variable"> :game</span><span> |</span></span>
+<span class="giallo-l"><span>	|</span><span class="z-variable z-other"> dict</span><span> |</span></span>
+<span class="giallo-l"><span>	dict </span><span class="z-keyword">:=</span><span class="z-entity z-name"> Dictionary</span><span class="z-keyword"> new</span><span>.</span></span>
+<span class="giallo-l"><span>	dict at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">red</span><span class="z-punctuation z-definition z-string">&#39;</span><span>) put: </span><span class="z-constant">0</span><span>;</span></span>
+<span class="giallo-l"><span>		at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">green</span><span class="z-punctuation z-definition z-string">&#39;</span><span>) put: </span><span class="z-constant">0</span><span>;</span></span>
+<span class="giallo-l"><span>	 	at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">blue</span><span class="z-punctuation z-definition z-string">&#39;</span><span>) put: </span><span class="z-constant">0</span><span>.</span></span>
+<span class="giallo-l"><span>	(game at: </span><span class="z-constant">2</span><span>) do: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> each do: </span><span>[</span><span class="z-variable"> :c</span><span> |</span><span> ((dict at: (c at: </span><span class="z-constant">2</span><span>)) </span><span class="z-keyword">&gt;</span><span> (c at:</span></span>
+<span class="giallo-l"><span class="z-constant">1</span><span>))</span></span>
+<span class="giallo-l"><span>		ifFalse: </span><span>[</span><span> dict at: (c at: </span><span class="z-constant">2</span><span>) put: (c at: </span><span class="z-constant">1</span><span>) </span><span>]</span><span>]</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	{ (game at: </span><span class="z-constant">1</span><span>) </span><span>.</span><span> dict }</span><span>.</span></span>
+<span class="giallo-l"><span>]</span><span>.</span></span></code></pre>
+<p>It basically creates a Dictionary with RGB counts at 0, then iterate on each set
+and check if the RGB count is <code>&gt;</code> than the local dict. If it is update the
+local dict and at the end return the game id with local dict with max values of
+RGB as an array.</p>
+<p>Not pretty because of lots of manual indexing. But effective. The result seems
+to be right.</p>
+<p><img src="/img/day-2-part1-3.png" alt="maximum colors" /></p>
+<p>Now we know the maximum colored cubes count, we can use <code>reject:</code> to remove
+anything if it exceeds the official limit:</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>((((gamesCollection collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> maxRGBinSingleGame </span><span class="z-support">value</span><span>: each </span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>	reject: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">red</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 12</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span>	reject: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">green</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 13</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span>	reject: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">blue</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 14</span><span> ]</span><span>)</span></span></code></pre>
+<p>This correctly gets rid of game 3 and 4.</p>
+<p><img src="/img/day-2-part1-4.png" alt="invalid rejected" /></p>
+<p>Now fold the <code>id</code>s using <code>inject:into:</code> and we get the correct result <code>8</code>.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>((((gamesCollection collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> maxRGBinSingleGame </span><span class="z-support">value</span><span>: each </span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>	reject: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">red</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 12</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span>	reject: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">green</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 13</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span>	reject: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) at: (</span><span class="z-entity z-name">Color</span><span> named: </span><span class="z-punctuation z-definition z-string">&#39;</span><span class="z-string">blue</span><span class="z-punctuation z-definition z-string">&#39;</span><span>)) </span><span class="z-keyword">&gt;</span><span class="z-constant"> 14</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span>	inject: </span><span class="z-constant">0</span><span> into: </span><span>[</span><span class="z-variable">:sum</span><span class="z-variable"> :each</span><span> |</span><span> sum </span><span class="z-keyword">+</span><span> (each at: </span><span class="z-constant">1</span><span>) </span><span>]</span><span>.</span></span></code></pre>
+<p>changing the sample input with the actaul <code>input.txt</code> and submitting the
+result, we pass the part 1 of the puzzle.
+<img src="/img/day-2-part1-5.png" alt="final part 1" /></p>
+<h2 id="day-2-part-2">Day 2 - part 2<a class="zola-anchor" href="#day-2-part-2" aria-label="Anchor link for: day-2-part-2" style="visibility: hidden;"></a>
+</h2>
+<p>part 2 turned out to be simple. We need to again calculate the
+<code>maxRGBinSingleGame</code> (though they worded it differently) but this time we have
+to multiply each max r g b value in a game and sum the result.</p>
+<p>Everything up until <code>maxRGBinSingleGame</code> remains untouched, only the last step
+needs to be changed.</p>
+<pre class="giallo z-code"><code data-lang="smalltalk"><span class="giallo-l"><span>((gamesCollection collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> maxRGBinSingleGame </span><span class="z-support">value</span><span>: each </span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>	collect: </span><span>[</span><span class="z-variable"> :each</span><span> |</span><span> ((each at: </span><span class="z-constant">2</span><span>) values) inject: </span><span class="z-constant">1</span><span> into:</span><span>[</span><span class="z-variable">:prod</span><span class="z-variable"> :e</span><span>|</span><span> prod </span><span class="z-keyword">*</span><span> e</span></span>
+<span class="giallo-l"><span>]</span><span>]</span><span>) inject: </span><span class="z-constant">0</span><span> into: </span><span>[</span><span class="z-variable"> :sum</span><span class="z-variable"> :e</span><span> |</span><span> sum </span><span class="z-keyword">+</span><span> e </span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-2-part2-1.png" alt="final part 2, really?" /></p>
+<p>and the answer is accepted. This concludes today's puzzle.</p>
+<p>Thanks for reading.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    <a hidden rel="me" href="https://privacysafe.social/@nsrahmad">Mastodon</a>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3b2ad4933163428581689380621df0af"}'></script><!-- End Cloudflare Web Analytics -->
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>
