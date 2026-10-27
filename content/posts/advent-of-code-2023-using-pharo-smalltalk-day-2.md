@@ -3,6 +3,7 @@ title = "Advent of Code 2023 Using Pharo Smalltalk Day 2"
 date = 2023-12-02T23:10:23+05:30
 [taxonomies]
 tags = ['smalltalk', 'programming', 'AdventOfCode']
+
 +++
 
 Yesterday's solution already looks facepalm worthy even though its been only
@@ -31,8 +32,7 @@ We could take a shortcut here without parsing everything, but the unknown part
 2 might become harder, So it is better to just parse everything to proper data
 structures.
 
-We will continue with the same image we used [yesterday]({{< ref
-"advent-of-code-2023-using-pharo-smalltalk-day-1" >}}), which already has
+We will continue with the same image we used [yesterday](@advent-of-code-2023-using-pharo-smalltalk-day-1.md), which already has
 PetitParser loaded in it. Open a new playground get the sample input in it:
 
 ```Smalltalk

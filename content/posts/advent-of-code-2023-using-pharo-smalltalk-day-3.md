@@ -3,6 +3,7 @@ title = "Advent of Code 2023 Using Pharo Smalltalk Day 3"
 date = 2023-12-10T19:55:44+05:30
 [taxonomies]
 tags = ['smalltalk', 'programming', 'AdventOfCode']
+
 +++
 
 This was a busy week and I was unable to make a single post throughout the week.
@@ -377,8 +378,8 @@ The data is finally in the desired shape. Reduce them with:
 starsWithNumbers inject: 0 into: [ :sum :e | ((e at: 1) * (e at: 2)) + sum ].
 ```
 
-And we are finished. The source is at the repository available at
-https://github.com/nsrahmad/AdventOfCode2023 .
+And we are finished. The source is at the repository available at 
+[this github repo](https://github.com/nsrahmad/AdventOfCode2023) .
 
 This was harder than usual because how useless the sample input was. Every edge
 case was in the actual input rather than in the sample. I really hated that at
