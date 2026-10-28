@@ -1,0 +1,601 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+    
+  <meta name="description" content="Writings about stuff">
+<link rel="canonical" href="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-3/">
+<meta property="og:site_name" content="Nisar&#39;s site">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Advent of Code 2023 Using Pharo Smalltalk Day 3">
+<meta property="og:description" content="Writings about stuff">
+<meta property="og:url" content="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-3/">
+<meta property="og:locale" content="en">
+
+
+<meta property="article:published_time" content="2023-12-10T19:55:44+05:30">
+
+<meta property="article:tag" content="smalltalk">
+<meta property="article:tag" content="programming">
+<meta property="article:tag" content="AdventOfCode">
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Advent of Code 2023 Using Pharo Smalltalk Day 3">
+<meta name="twitter:description" content="Writings about stuff">
+
+
+
+  <title>Advent of Code 2023 Using Pharo Smalltalk Day 3</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  <style>
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/linux-biolinum-custom-400-normal.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/linux-biolinum-custom-400-italic.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: bold;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/fonts/linux-biolinum-custom-700-normal.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Datatype Regular';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/Datatype_Regular.woff2) format(woff2);
+}
+</style>
+
+  <style>
+
+  /* light mode colors */
+body {
+  /* A vibrant, modern Royal Blue for better pop and accessibility */
+  --primary-color: #2563eb;
+  --primary-pale-color: #2563eb1a;  /* 10% opacity */
+  --primary-decoration-color: #2563eb14; /* 8% opacity */
+
+  --bg-color: #ffffff;
+
+  /* Deep gray-blue instead of flat gray for richer contrast */
+  --text-color: #111827;
+  --text-pale-color: #4b5563;       /* Darker pale text to meet WCAG contrast guidelines */
+  --text-decoration-color: #d1d5db;
+  --highlight-mark-color: #2563eb26; /* 15% opacity */
+
+  /* Callouts updated to bright, distinct, semantic hues */
+  --callout-note-color: #2563eb;     /* Blue */
+  --callout-tip-color: #16a34a;      /* Emerald Green */
+  --callout-important-color: #9333ea;/* Vibrant Purple */
+  --callout-warning-color: #ea580c;  /* Bright Orange */
+  --callout-caution-color: #dc2626;  /* Strong Red */
+}
+
+/* dark mode colors */
+body.dark {
+  /* A bright, soft sky blue that is highly legible on dark backgrounds */
+  --primary-color: #60a5fa;
+  --primary-pale-color: #60a5fa26;   /* 15% opacity */
+  --primary-decoration-color: #60a5fa14; /* 8% opacity */
+
+  /* A deep, slightly cool-tinted dark gray (far more premium than flat #1c1c1c) */
+  --bg-color: #111827;
+
+  /* Off-white and medium-light grays to reduce eye strain while keeping contrast high */
+  --text-color: #f3f4f6;
+  --text-pale-color: #9ca3af;
+  --text-decoration-color: #374151;
+  --highlight-mark-color: #60a5fa33; /* 20% opacity */
+
+  /* Callouts updated to neon/pastel variants so they glow nicely in dark mode */
+  --callout-note-color: #60a5fa;     /* Sky Blue */
+  --callout-tip-color: #4ade80;      /* Light Green */
+  --callout-important-color: #c084fc;/* Light Purple */
+  --callout-warning-color: #fb923c;  /* Light Orange */
+  --callout-caution-color: #f87171;  /* Light Red */
+}
+
+  /* typography */
+  body {
+    --main-font: 'Linux Biolinum', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: 'Datatype Regular',ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 1.2rem;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3b2ad4933163428581689380621df0af"}'></script><!-- End Cloudflare Web Analytics -->
+
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#part-1">Part 1</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#part-2">Part 2</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https://nsrahmad.github.io/posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Advent of Code 2023 Using Pharo Smalltalk Day 3</h1>
+        
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Dec 10, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://nsrahmad.github.io/tags/smalltalk/"><span>#</span>smalltalk</a><a class="instant" href="https://nsrahmad.github.io/tags/programming/"><span>#</span>programming</a><a class="instant" href="https://nsrahmad.github.io/tags/adventofcode/"><span>#</span>AdventOfCode</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        
+        
+        <blockquote id="outdate_alert" class="markdown-alert-caution hidden" data-days="120"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <p>This was a busy week and I was unable to make a single post throughout the week.
+This however, does not mean I have abandoned AoC. I will try to catch up but I
+should mention that finishing everyday was not the goal to begin with, the goal
+for me is to learn Pharo while doing as many puzzles as I can.</p>
+<h2 id="part-1">Part 1<a class="zola-anchor" href="#part-1" aria-label="Anchor link for: part-1" style="visibility: hidden;"></a>
+</h2>
+<p>Sample input for part 1 is :</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="plain"><span class="giallo-l"><span>467..114..</span></span>
+<span class="giallo-l"><span>...*......</span></span>
+<span class="giallo-l"><span>..35..633.</span></span>
+<span class="giallo-l"><span>......#...</span></span>
+<span class="giallo-l"><span>617*......</span></span>
+<span class="giallo-l"><span>.....+.58.</span></span>
+<span class="giallo-l"><span>..592.....</span></span>
+<span class="giallo-l"><span>......755.</span></span>
+<span class="giallo-l"><span>...$.*....</span></span>
+<span class="giallo-l"><span>.664.598..</span></span></code></pre>
+<p>If a number is surrounded by <code>.</code> alone (including diagonally), then it is
+invalid and we have to reject it. After that the sum of remaining valid numbers
+is the answer. In the sample <code>114</code> and <code>58</code> are invalid.</p>
+<p>Let’s open playground in pharo and insert the input :</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">467..114..</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">...*......</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">..35..633.</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">......#...</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">617*......</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">.....+.58.</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">..592.....</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">......755.</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">...$.*....</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">.664.598..</span><span class="z-l-2 z-d-6">&#39;</span><span> lines</span><span>.</span></span></code></pre>
+<p>I am also seprating the lines with <code>lines</code> message to string (In day 1 and 2, I
+was manually calling <code>splitOn</code> with newline to do that 🤦‍♂️).</p>
+<p>Now we need to calculate neighbors for each number. But before we do that, we
+need to make sure that every number has 8 neighbors, right now, the cell at
+corner will have only 3 neighbors, cell at edge will have 5 corners and so on.
+One trick I learned some time ago while doing TicTacToe was to surround the
+input with one additional <code>.</code> on all sides, which greatly simplifies
+calculations because now every cell (characters in this case) that we care about
+will have 8 neighbors.</p>
+<p>Also, I will not show the declaration of variables from now on. At the end I
+will link the complete source.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>padLines</span><span class="z-l-8 z-d-10"> :=</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">col</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	 | </span><span>paddedlineSize</span><span> padLine</span><span> result</span><span>|</span></span>
+<span class="giallo-l"><span>	paddedlineSize</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>col</span><span> first</span><span>)</span><span> size</span><span class="z-l-8 z-d-10"> + </span><span class="z-l-1 z-d-4">2</span><span>.</span></span>
+<span class="giallo-l"><span>	padLine</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">.</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-6 z-d-7"> repeat:</span><span> paddedlineSize</span><span> .</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-8 z-d-10"> :=</span><span> col</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">.</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-8 z-d-10">,</span><span>each</span><span class="z-l-8 z-d-10">,</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">.</span><span class="z-l-2 z-d-6">&#39;</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-6 z-d-7"> addFirst:</span><span> padLine</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-6 z-d-7"> addLast:</span><span> padLine</span><span> ;</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>		yourself</span><span>.</span></span>
+<span class="giallo-l"><span>]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>paddedLines</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>padLines</span><span class="z-l-6 z-d-7"> value:</span><span> input</span><span> asOrderedCollection</span><span>)</span><span>.</span></span></code></pre>
+<p>We add a line of dots at the start and at the end, while also adding a single
+<code>.</code> at the start and end of the line. since <code>addFirst</code> and <code>addLast</code> are not
+defined for arrays, we pass <code>input</code> as <code>OrderedCollection</code>.</p>
+<p>Now to detect numbers, we will use <code>PetitParser</code>.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>aNumber</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-1 z-d-4"> #</span><span class="z-l-1 z-d-4">digit</span><span> asParser</span><span> plus</span><span>.</span></span>
+<span class="giallo-l"><span>numberRanges</span><span class="z-l-8 z-d-10"> :=</span><span> paddedLines</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span>:</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>aNumber</span><span class="z-l-6 z-d-7"> matchingSkipRangesIn:</span><span> each</span><span> ]</span><span>.</span></span></code></pre>
+<p>We are using <code>matchingSkipRangesIn:</code>, which doesn’t directly gives the matching
+number but the number’s range in the string.</p>
+<p><img src="/img/day-3-part-1-1.png" alt="number ranges" /></p>
+<p>So the first line doesn’t have any number, because we added a line of dots. In
+second line, <code>(2 to: 4)</code> is the number <code>467</code>. It starts at 2 because we
+added a <code>.</code> at the start of the line.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>generateNeighbors</span><span class="z-l-8 z-d-10"> :=</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">numInterval</span><span> :</span><span class="z-l-9 z-d-12">line</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	|</span><span> currentLine</span><span> previousLine</span><span> nextLine</span><span> start</span><span> end</span><span> result</span><span> number</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	previousLine</span><span class="z-l-8 z-d-10"> :=</span><span> paddedLines</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span>line</span><span class="z-l-8 z-d-10"> - </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	currentLine</span><span class="z-l-8 z-d-10"> :=</span><span> paddedLines</span><span class="z-l-6 z-d-7"> at:</span><span> line</span><span>.</span></span>
+<span class="giallo-l"><span>	nextLine</span><span class="z-l-8 z-d-10"> :=</span><span> paddedLines</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span>line</span><span class="z-l-8 z-d-10"> + </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	start</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>numInterval</span><span> first</span><span>)</span><span class="z-l-8 z-d-10"> - </span><span class="z-l-1 z-d-4">1</span><span>.</span></span>
+<span class="giallo-l"><span>	end</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>numInterval</span><span> last</span><span>)</span><span class="z-l-8 z-d-10"> + </span><span class="z-l-1 z-d-4">1</span><span>.</span></span>
+<span class="giallo-l"><span>	number</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>currentLine</span><span class="z-l-6 z-d-7"> copyFrom:</span><span> (</span><span>numInterval</span><span> first</span><span>)</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		to:</span><span> (</span><span>numInterval</span><span> last</span><span>)</span><span>)</span><span> asNumber</span><span> .</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>previousLine</span><span class="z-l-6 z-d-7"> copyFrom:</span><span> start</span><span class="z-l-6 z-d-7"> to:</span><span> end</span><span>)</span><span class="z-l-8 z-d-10">,</span></span>
+<span class="giallo-l"><span>		(</span><span>currentLine</span><span class="z-l-6 z-d-7"> at:</span><span> start</span><span>)</span><span> asString</span><span class="z-l-8 z-d-10"> , </span></span>
+<span class="giallo-l"><span>		(</span><span>nextLine</span><span class="z-l-6 z-d-7">  copyFrom:</span><span> start</span><span class="z-l-6 z-d-7"> to:</span><span> end</span><span> )</span><span class="z-l-8 z-d-10">,</span></span>
+<span class="giallo-l"><span>		(</span><span>currentLine</span><span class="z-l-6 z-d-7"> at:</span><span> end</span><span>)</span><span> asString</span><span>.</span></span>
+<span class="giallo-l"><span>	{</span><span> number</span><span> .</span><span> result</span><span>}</span></span>
+<span class="giallo-l"><span>	]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>numbers</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> OrderedCollection</span><span> new</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>numberRanges</span><span class="z-l-6 z-d-7"> doWithIndex:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span> :</span><span class="z-l-9 z-d-12">index</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	 each</span><span> isNotEmpty</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	 ifTrue:</span><span> [</span><span>numbers</span><span class="z-l-6 z-d-7"> add:</span><span> (</span><span>each</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">n</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		(</span><span>generateNeighbors</span><span class="z-l-6 z-d-7"> value:</span><span> n</span><span class="z-l-6 z-d-7"> value:</span><span> index</span><span>)</span><span>]</span><span>)</span><span>]</span><span>]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>numbers</span></span></code></pre>
+<p>which gives:
+<img src="/img/day-3-part-1-2.png" alt="numbers with neighbors" /></p>
+<p>Now any pair that has only <code>.</code> as neighbors is rejected and we sum the rest:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>(</span><span>(</span><span>numbers</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	each</span><span class="z-l-6 z-d-7"> reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> matchesRegex:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">\.*</span><span class="z-l-2 z-d-6">&#39;</span><span>]</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		thenCollect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span> ]</span><span>]</span><span>)</span><span> flattened</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	inject:</span><span class="z-l-1 z-d-4"> 0</span><span class="z-l-6 z-d-7"> into:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">sum</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>sum</span><span class="z-l-8 z-d-10"> + </span><span>e</span><span> ]</span></span></code></pre>
+<p>Replace the sample input with the real input and the part 1 is complete.</p>
+<h2 id="part-2">Part 2<a class="zola-anchor" href="#part-2" aria-label="Anchor link for: part-2" style="visibility: hidden;"></a>
+</h2>
+<p>In part 2, we need to find pair of numbers which share the same <code>*</code> as neighbor.
+Then we need to multiply those pair of numbers and add them all. It was easy
+enough to do this for sample input, but the real input has some edge cases which
+were harder to find. That is when I decided to represent the input as 2D grid
+and visualize it with Roassal.</p>
+<p>I found a 2D grid implementation on github, so we can use that. Evaluating the
+following should load it.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-6 z-d-7">Metacello</span><span> new</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">  baseline:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">ContainersGrid</span><span class="z-l-2 z-d-6">&#39;</span><span>;</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">  repository:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">github://Ducasse/Containers-Grid/src</span><span class="z-l-2 z-d-6">&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>  load</span><span>.</span></span></code></pre>
+<p>The package provides a <code>CTGrid</code> class which we are going to subclass, because we
+will add some additional methods to it. Add a new class in your package named
+<code>Grid2D</code> which subclasses <code>CTGrid</code>. The code at this point looks like:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> padLines</span><span> paddedLines</span><span> grid</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">467..114..</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">...*......</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">..35..633.</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">......#...</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">617*......</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">.....+.58.</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">..592.....</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">......755.</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">...$.*....</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">.664.598..</span><span class="z-l-2 z-d-6">&#39;</span><span> lines</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>padLines</span><span class="z-l-8 z-d-10"> :=</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">col</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	 | </span><span>paddedlineSize</span><span> padLine</span><span> result</span><span>|</span></span>
+<span class="giallo-l"><span>	paddedlineSize</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>col</span><span> first</span><span>)</span><span> size</span><span class="z-l-8 z-d-10"> + </span><span class="z-l-1 z-d-4">2</span><span>.</span></span>
+<span class="giallo-l"><span>	padLine</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">.</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-6 z-d-7"> repeat:</span><span> paddedlineSize</span><span> .</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-8 z-d-10"> :=</span><span> col</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">.</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-8 z-d-10">,</span><span>each</span><span class="z-l-8 z-d-10">,</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">.</span><span class="z-l-2 z-d-6">&#39;</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-6 z-d-7"> addFirst:</span><span> padLine</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-6 z-d-7"> addLast:</span><span> padLine</span><span> ;</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>		yourself</span><span>.</span></span>
+<span class="giallo-l"><span>	]</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>paddedLines</span><span class="z-l-8 z-d-10"> :=</span><span> padLines</span><span class="z-l-6 z-d-7"> value:</span><span> input</span><span> asOrderedCollection</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>grid</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> Grid2D</span><span class="z-l-6 z-d-7"> columns:</span><span> (</span><span>(</span><span>paddedLines</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span>)</span><span> size</span><span>)</span><span class="z-l-6 z-d-7"> rows:</span><span> (</span><span>paddedLines</span><span> size</span><span>)</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>paddedLines</span><span class="z-l-6 z-d-7"> doWithIndex:</span><span>  [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span> :</span><span class="z-l-9 z-d-12">row</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	each</span><span class="z-l-6 z-d-7"> doWithIndex:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span> :</span><span class="z-l-9 z-d-12">col</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		grid</span><span class="z-l-6 z-d-7"> atRow:</span><span> row</span><span class="z-l-6 z-d-7"> atColumn:</span><span> col</span><span class="z-l-6 z-d-7"> put:</span><span> e</span><span>]</span><span> ]</span><span>.</span></span></code></pre>
+<p>We pad the lines as we did in part 1, then initialize a grid with the data. The
+grid in the inspector looks like:</p>
+<p><img src="/img/day-3-part-2-1.png" alt="grid inspector without roassal" /></p>
+<p>That’s not how a grid should look. This is where Roassal comes in. Use the main
+menu <code>Library &gt; Roassal3 &gt; Load &gt; Load full version</code> to load Roassal. Then add a
+method <code>visualize</code> to our <code>Grid2D</code> class. The actual name of the method could be
+anything, what matters is that it returns an instance of <code>RCanvas</code>’s canvas.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>visualize</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10"> 	| </span><span>c</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	c</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> RSCanvas</span><span> new</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-1 z-d-4">	self</span><span class="z-l-6 z-d-7"> withIndicesDo:</span><span>  [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span> :</span><span class="z-l-9 z-d-12">row</span><span> :</span><span class="z-l-9 z-d-12">col</span><span class="z-l-8 z-d-10"> | </span></span>
+<span class="giallo-l"><span>		|</span><span> circle</span><span> labeledCircle</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		circle</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7">  RSCircle</span><span> new</span><span class="z-l-6 z-d-7"> size:</span><span class="z-l-1 z-d-4"> 30</span><span>.</span></span>
+<span class="giallo-l"><span>		circle</span><span class="z-l-8 z-d-10"> @ </span><span>(</span><span class="z-l-6 z-d-7">RSPopup</span><span> new</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		text:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>row</span><span class="z-l-8 z-d-10">@</span><span>col</span><span>]</span><span>;</span></span>
+<span class="giallo-l"><span>		yourself</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>		circle</span><span class="z-l-6 z-d-7"> color:</span><span class="z-l-6 z-d-7"> Color</span><span> pink</span><span> muchLighter</span><span>.</span></span>
+<span class="giallo-l"><span>		labeledCircle</span><span class="z-l-8 z-d-10"> :=</span><span> {</span><span> circle</span><span> .</span><span class="z-l-6 z-d-7"> RSLabel</span><span> new</span><span class="z-l-6 z-d-7"> color:</span><span class="z-l-6 z-d-7"> Color</span><span> black</span><span>;</span><span class="z-l-6 z-d-7"> text:</span><span> each</span><span> }</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>			asGroup</span><span class="z-l-6 z-d-7"> asShapeFor:</span><span> each</span><span>.</span></span>
+<span class="giallo-l"><span>		c</span><span class="z-l-6 z-d-7"> add:</span><span> labeledCircle</span><span> ]</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	RSGridLayout</span><span> new</span><span class="z-l-6 z-d-7"> lineItemsCount:</span><span class="z-l-1 z-d-4"> self</span><span> rowCount</span><span> ;</span><span class="z-l-6 z-d-7"> on:</span><span> c</span><span> shapes</span><span>.</span></span>
+<span class="giallo-l"><span>	c</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-6 z-d-7">RSCanvasController</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	^</span><span> c</span><span> canvas</span></span></code></pre>
+<p>This gives a much better result. The output is interactive and we could zoom and
+pan around.</p>
+<p><img src="/img/day-3-part-2-2.png" alt="grid visualized" /></p>
+<p>We could do better, let’s add another method <code>visualizeWithHighlight</code> to
+<code>Grid2D</code>:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-6 z-d-7">visualizeWithHighlight:</span><span> aBlock</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	| </span><span>c</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	c</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> RSCanvas</span><span> new</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-1 z-d-4">	self</span><span class="z-l-6 z-d-7"> withIndicesDo:</span><span>  [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span> :</span><span class="z-l-9 z-d-12">row</span><span> :</span><span class="z-l-9 z-d-12">col</span><span class="z-l-8 z-d-10"> | </span></span>
+<span class="giallo-l"><span>		|</span><span> circle</span><span> labeledCircle</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		circle</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7">  RSCircle</span><span> new</span><span class="z-l-6 z-d-7"> size:</span><span class="z-l-1 z-d-4"> 30</span><span>.</span></span>
+<span class="giallo-l"><span>		circle</span><span class="z-l-8 z-d-10"> @ </span><span>(</span><span class="z-l-6 z-d-7">RSPopup</span><span> new</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		text:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>row</span><span class="z-l-8 z-d-10">@</span><span>col</span><span>]</span><span>;</span></span>
+<span class="giallo-l"><span>		yourself</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>		circle</span><span class="z-l-6 z-d-7"> color:</span><span> (</span><span>aBlock</span><span class="z-l-6 z-d-7"> value:</span><span> each</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>		labeledCircle</span><span class="z-l-8 z-d-10"> :=</span><span> {</span><span> circle</span><span> .</span><span class="z-l-6 z-d-7"> RSLabel</span><span> new</span><span class="z-l-6 z-d-7"> color:</span><span class="z-l-6 z-d-7"> Color</span><span> black</span><span>;</span><span class="z-l-6 z-d-7"> text:</span><span> each</span><span> }</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>		    asGroup</span><span class="z-l-6 z-d-7"> asShapeFor:</span><span> each</span><span>.</span></span>
+<span class="giallo-l"><span>		c</span><span class="z-l-6 z-d-7"> add:</span><span> labeledCircle</span><span> ]</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	RSGridLayout</span><span> new</span><span class="z-l-6 z-d-7"> lineItemsCount:</span><span class="z-l-1 z-d-4"> self</span><span> rowCount</span><span> ;</span><span class="z-l-6 z-d-7"> on:</span><span> c</span><span> shapes</span><span>.</span></span>
+<span class="giallo-l"><span>	c</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-6 z-d-7">RSCanvasController</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	^</span><span> c</span><span> canvas</span></span></code></pre>
+<p>Everything is same except we pass a block which sets the color of the circle.
+This lets the caller decide which color to use for each circle. For example, if
+we wanted to highlight each <code>*</code> on the grid, we could do:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>grid</span><span class="z-l-6 z-d-7"> visualizeWithHighlight:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>each</span><span class="z-l-8 z-d-10"> = </span><span class="z-l-1 z-d-4">$</span><span class="z-l-1 z-d-4">*</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	ifTrue:</span><span> [</span><span class="z-l-6 z-d-7"> Color</span><span> pink</span><span> ]</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	ifFalse:</span><span> [</span><span class="z-l-6 z-d-7"> Color</span><span> pink</span><span> muchLighter</span><span> ]</span><span> ]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-3.png" alt="star highlighted in grid" /></p>
+<p>If we change the highlight color to red and switch input with real input, then
+the <code>*</code>’s on real input looks like:</p>
+<p><img src="/img/day-3-part-2-4.png" alt="the real grid highlighted" /></p>
+<p>You can zoom in and out and pan as usual. Mouse over gives me the
+actual location of the cell.</p>
+<p><img src="/img/day-3-part-2-5.png" alt="grid zoomed in" /></p>
+<p>Also added a <code>at:</code> method to <code>Grid2D</code> which takes a point like <code>1@1</code> and gives
+us the item there:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-6 z-d-7">at:</span><span> aPoint</span></span>
+<span class="giallo-l"><span>	aPoint</span><span> isPoint</span><span class="z-l-6 z-d-7"> ifTrue:</span><span> [</span><span class="z-l-8 z-d-10">^</span><span class="z-l-1 z-d-4"> self</span><span class="z-l-6 z-d-7"> atRow:</span><span> aPoint</span><span> x</span><span class="z-l-6 z-d-7"> atColumn:</span><span> aPoint</span><span> y</span><span> ]</span><span>.</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	^</span><span class="z-l-1 z-d-4"> self</span><span> contents</span><span class="z-l-6 z-d-7"> at:</span><span> aPoint</span><span class="z-l-8 z-d-10"> </span></span></code></pre>
+<p>Enough about visualization, let’s get back to the puzzle.</p>
+<p>First helper function we need is called <code>readNumberAt</code>. Given a point on the
+grid with a digit, This function returns the whole number by combining
+consecutive digits on the left or right.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>readNumberAt</span><span class="z-l-8 z-d-10"> :=</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">pos</span><span> :</span><span class="z-l-9 z-d-12">aGrid</span><span class="z-l-8 z-d-10"> | </span></span>
+<span class="giallo-l"><span>	|</span><span> result</span><span> lPos</span><span> rPos</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	lPos</span><span class="z-l-8 z-d-10"> :=</span><span> pos</span><span class="z-l-8 z-d-10"> - </span><span>(</span><span class="z-l-1 z-d-4">0</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	rPos</span><span class="z-l-8 z-d-10"> :=</span><span> pos</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">0</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">&#39;</span><span>.</span></span>
+<span class="giallo-l"><span>	[</span><span>(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> pos</span><span>)</span><span> isDigit</span><span class="z-l-8 z-d-10"> &amp; </span><span>(</span><span>(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> lPos</span><span>)</span><span> isDigit</span><span>)</span><span>]</span><span class="z-l-6 z-d-7"> whileTrue:</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>		[</span><span>result</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> lPos</span><span>)</span><span> asString</span><span class="z-l-8 z-d-10"> ,  </span><span>result</span><span>.</span></span>
+<span class="giallo-l"><span>		lPos</span><span class="z-l-8 z-d-10"> :=</span><span> lPos</span><span class="z-l-8 z-d-10"> - </span><span>(</span><span class="z-l-1 z-d-4">0</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> pos</span><span>)</span><span> isDigit</span><span class="z-l-6 z-d-7"> ifTrue:</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>		[</span><span>result</span><span class="z-l-8 z-d-10"> :=</span><span> result</span><span class="z-l-8 z-d-10"> , </span><span>(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> pos</span><span>)</span><span> asString</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	[</span><span>(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> pos</span><span>)</span><span> isDigit</span><span class="z-l-8 z-d-10"> &amp; </span><span>(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> rPos</span><span>)</span><span> isDigit</span><span>]</span><span class="z-l-6 z-d-7"> whileTrue:</span></span>
+<span class="giallo-l"><span>		[</span><span>result</span><span class="z-l-8 z-d-10"> :=</span><span> result</span><span class="z-l-8 z-d-10"> , </span><span>(</span><span>aGrid</span><span class="z-l-6 z-d-7"> at:</span><span> rPos</span><span>)</span><span> asString</span><span>.</span></span>
+<span class="giallo-l"><span>		rPos</span><span class="z-l-8 z-d-10"> :=</span><span> rPos</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">0</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	result</span></span>
+<span class="giallo-l"><span>]</span><span>.</span></span></code></pre>
+<p>Another helper is a <code>neighbors</code> fucntion, which gives eight neighbors of a point
+on grid. I am aware of the <code>eightNeighbors</code> method of the <code>Point</code> class which is
+part of the standard library. But it is problemetic for us, because it starts
+from the point directly below and goes anticlockwise. If a 2 digit number is at
+our lower left side, then the digtis will get split up. We don’t want that,
+hence our own <code>neighbors</code> function. It starts from upper left corner and goes
+clockwise:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>neighbors</span><span class="z-l-8 z-d-10"> :=</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">aPoint</span><span class="z-l-8 z-d-10"> | </span></span>
+<span class="giallo-l"><span>	{</span><span> {</span><span>aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-8 z-d-10">-</span><span class="z-l-1 z-d-4">1</span><span class="z-l-8 z-d-10"> @ -</span><span class="z-l-1 z-d-4">1</span><span>)</span><span> .</span><span> aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-8 z-d-10">-</span><span class="z-l-1 z-d-4">1</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">0</span><span>)</span><span> .</span><span> aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-8 z-d-10">-</span><span class="z-l-1 z-d-4">1</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span>}</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>	.</span><span> aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">0</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span> .</span><span> {</span><span>aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">1</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">1</span><span>)</span><span> .</span><span> aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">1</span><span class="z-l-8 z-d-10"> @ </span><span class="z-l-1 z-d-4">0</span><span>)</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>	.</span><span> aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">1</span><span class="z-l-8 z-d-10"> @ -</span><span class="z-l-1 z-d-4">1</span><span>)</span><span> }</span><span>.</span><span> aPoint</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span class="z-l-1 z-d-4">0</span><span class="z-l-8 z-d-10"> @ -</span><span class="z-l-1 z-d-4">1</span><span>)</span><span> }</span><span> ]</span><span>.</span></span></code></pre>
+<p>We go around the grid and collect each star’s location:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>stars</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> OrderedCollection</span><span> new</span><span>.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>grid</span><span class="z-l-6 z-d-7"> withIndicesDo:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span> :</span><span class="z-l-9 z-d-12">row</span><span> :</span><span class="z-l-9 z-d-12">col</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	(</span><span>each</span><span class="z-l-8 z-d-10"> = </span><span class="z-l-1 z-d-4">$</span><span class="z-l-1 z-d-4">*</span><span>)</span><span class="z-l-6 z-d-7"> ifTrue:</span><span> [</span><span>stars</span><span class="z-l-6 z-d-7"> add:</span><span> row</span><span class="z-l-8 z-d-10">@</span><span>col</span><span>]</span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-6.png" alt="sample input stars" /></p>
+<p>Then we go around each star and collect numbers which are in their neighborhood:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>stars</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>neighbors</span><span class="z-l-6 z-d-7"> value:</span><span> each</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	collect:</span><span> [</span><span>:</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span></span>
+<span class="giallo-l"><span>		{</span><span> (</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span>)</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span>:</span><span class="z-l-9 z-d-12">top</span><span class="z-l-8 z-d-10"> | </span><span>readNumberAt</span><span class="z-l-6 z-d-7"> value:</span><span> top</span><span class="z-l-6 z-d-7"> value:</span><span> grid</span><span>]</span></span>
+<span class="giallo-l"><span>		.</span><span> readNumberAt</span><span class="z-l-6 z-d-7"> value:</span><span> (</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> value:</span><span> grid</span><span class="z-l-8 z-d-10"> </span></span>
+<span class="giallo-l"><span>		.</span><span> (</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 3</span><span>)</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span>:</span><span class="z-l-9 z-d-12">bottom</span><span class="z-l-8 z-d-10"> | </span><span>readNumberAt</span><span class="z-l-6 z-d-7"> value:</span><span> bottom</span><span class="z-l-6 z-d-7"> value:</span><span> grid</span><span>]</span></span>
+<span class="giallo-l"><span>		.</span><span> readNumberAt</span><span class="z-l-6 z-d-7"> value:</span><span> (</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 4</span><span>)</span><span class="z-l-6 z-d-7"> value:</span><span> grid</span><span>}</span><span> flattened</span><span>]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-7.png" alt="sample numbers with star" /></p>
+<p>Notice how if 2 digits are neighbors of <code>*</code> then they get collected twice.
+Luckily they will always be adjacent so getting rid of them is not that hard.
+The naive version, by using <code>asSet</code> gets in trouble because one of the pairs are
+same numbers, and they are both at the top too. But the distinguishing factor
+is, they will have a space between them as a <code>.</code>.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers</span><span class="z-l-8 z-d-10"> :=</span><span> starsWithNumbers</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		|</span><span> result</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		result</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> OrderedCollection</span><span> new</span><span>.</span></span>
+<span class="giallo-l"><span>		each</span><span class="z-l-6 z-d-7"> do:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">x</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>			result</span><span> isEmpty</span><span class="z-l-6 z-d-7"> ifTrue:</span><span> [</span><span> result</span><span class="z-l-6 z-d-7"> add:</span><span> x</span><span>]</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">			ifFalse:</span><span> [</span><span>(</span><span>result</span><span> last</span><span>)</span><span class="z-l-8 z-d-10"> = </span><span>x</span><span class="z-l-6 z-d-7"> ifFalse:</span><span> [</span><span>result</span><span class="z-l-6 z-d-7"> add:</span><span> x</span><span>]</span><span>]</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>		result</span><span>]</span><span>.</span></span></code></pre>
+<p>This gets rid of the duplicates but keeps the same numbers if they appear as
+pair.</p>
+<p><img src="/img/day-3-part-2-8.png" alt="duplicates gone" /></p>
+<p>Now we need to get rid of blanks and the stars with single number as neighbor:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>starsWithNumbers</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>		each</span><span class="z-l-6 z-d-7"> reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>e</span><span class="z-l-8 z-d-10"> = </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">&#39;</span><span> ]</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		thenCollect:</span><span> [</span><span>:</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>e</span><span> asNumber</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		select:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>e</span><span> size</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">1</span><span> ]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-3-part-2-9.png" alt="pairs are ready" /></p>
+<p>The data is finally in the desired shape. Reduce them with:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>starsWithNumbers</span><span class="z-l-6 z-d-7"> inject:</span><span class="z-l-1 z-d-4"> 0</span><span class="z-l-6 z-d-7"> into:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">sum</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span>)</span><span class="z-l-8 z-d-10"> * </span><span>(</span><span>e</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> + </span><span>sum</span><span> ]</span><span>.</span></span></code></pre>
+<p>And we are finished. The source is at the repository available at
+<a rel="nofollow noreferrer external" href="https://github.com/nsrahmad/AdventOfCode2023">this github repo</a> .</p>
+<p>This was harder than usual because how useless the sample input was. Every edge
+case was in the actual input rather than in the sample. I really hated that at
+first but after finishing it, It didn’t feel that bad after all.</p>
+<p>Reminds me of my favorite quote from “Ender’s Game” by  Orson Scott Card:</p>
+<blockquote>
+<p>“In the moment when I truly understand my enemy, understand him well enough to
+defeat him, then in that very moment I also love him. I think it’s impossible
+to really understand somebody, what they want, what they believe, and not love
+them the way they love themselves. And then, in that very moment when I love
+them…. I destroy them.”</p>
+</blockquote>
+<p>I guess it is also true of software bugs and hard puzzles. See you soon.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    
+
+  
+  
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2026 Nisar Ahmad
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    <a id="rss-btn" href="https://nsrahmad.github.io/posts/rss.xml">RSS</a>
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https://nsrahmad.github.io/posts/rss.xml">https://nsrahmad.github.io/posts/rss.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https://nsrahmad.github.io/posts/rss.xml" data-copy-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>

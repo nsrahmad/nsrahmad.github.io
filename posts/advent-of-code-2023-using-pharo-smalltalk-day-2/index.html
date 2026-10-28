@@ -1,0 +1,427 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+    
+  <meta name="description" content="Writings about stuff">
+<link rel="canonical" href="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/">
+<meta property="og:site_name" content="Nisar&#39;s site">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Advent of Code 2023 Using Pharo Smalltalk Day 2">
+<meta property="og:description" content="Writings about stuff">
+<meta property="og:url" content="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/">
+<meta property="og:locale" content="en">
+
+
+<meta property="article:published_time" content="2023-12-02T23:10:23+05:30">
+
+<meta property="article:tag" content="smalltalk">
+<meta property="article:tag" content="programming">
+<meta property="article:tag" content="AdventOfCode">
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Advent of Code 2023 Using Pharo Smalltalk Day 2">
+<meta name="twitter:description" content="Writings about stuff">
+
+
+
+  <title>Advent of Code 2023 Using Pharo Smalltalk Day 2</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  <style>
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/linux-biolinum-custom-400-normal.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/linux-biolinum-custom-400-italic.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: bold;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/fonts/linux-biolinum-custom-700-normal.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Datatype Regular';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/Datatype_Regular.woff2) format(woff2);
+}
+</style>
+
+  <style>
+
+  /* light mode colors */
+body {
+  /* A vibrant, modern Royal Blue for better pop and accessibility */
+  --primary-color: #2563eb;
+  --primary-pale-color: #2563eb1a;  /* 10% opacity */
+  --primary-decoration-color: #2563eb14; /* 8% opacity */
+
+  --bg-color: #ffffff;
+
+  /* Deep gray-blue instead of flat gray for richer contrast */
+  --text-color: #111827;
+  --text-pale-color: #4b5563;       /* Darker pale text to meet WCAG contrast guidelines */
+  --text-decoration-color: #d1d5db;
+  --highlight-mark-color: #2563eb26; /* 15% opacity */
+
+  /* Callouts updated to bright, distinct, semantic hues */
+  --callout-note-color: #2563eb;     /* Blue */
+  --callout-tip-color: #16a34a;      /* Emerald Green */
+  --callout-important-color: #9333ea;/* Vibrant Purple */
+  --callout-warning-color: #ea580c;  /* Bright Orange */
+  --callout-caution-color: #dc2626;  /* Strong Red */
+}
+
+/* dark mode colors */
+body.dark {
+  /* A bright, soft sky blue that is highly legible on dark backgrounds */
+  --primary-color: #60a5fa;
+  --primary-pale-color: #60a5fa26;   /* 15% opacity */
+  --primary-decoration-color: #60a5fa14; /* 8% opacity */
+
+  /* A deep, slightly cool-tinted dark gray (far more premium than flat #1c1c1c) */
+  --bg-color: #111827;
+
+  /* Off-white and medium-light grays to reduce eye strain while keeping contrast high */
+  --text-color: #f3f4f6;
+  --text-pale-color: #9ca3af;
+  --text-decoration-color: #374151;
+  --highlight-mark-color: #60a5fa33; /* 20% opacity */
+
+  /* Callouts updated to neon/pastel variants so they glow nicely in dark mode */
+  --callout-note-color: #60a5fa;     /* Sky Blue */
+  --callout-tip-color: #4ade80;      /* Light Green */
+  --callout-important-color: #c084fc;/* Light Purple */
+  --callout-warning-color: #fb923c;  /* Light Orange */
+  --callout-caution-color: #f87171;  /* Light Red */
+}
+
+  /* typography */
+  body {
+    --main-font: 'Linux Biolinum', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: 'Datatype Regular',ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 1.2rem;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-light.css" />
+
+
+
+
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3b2ad4933163428581689380621df0af"}'></script><!-- End Cloudflare Web Analytics -->
+
+</head>
+
+<body class="post">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div id="wrapper">
+  <div id="blank"></div>
+  <aside>
+    
+    
+    <nav>
+      <ul>
+        
+        <li>
+          <a class="h2" href="#day-2-part-1">Day 2 - Part 1</a>
+          
+        </li>
+        
+        <li>
+          <a class="h2" href="#day-2-part-2">Day 2 - part 2</a>
+          
+        </li>
+        
+      </ul>
+    </nav>
+    
+    
+    <button id="back-to-top" aria-label="back to top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+
+    </button>
+    
+  </aside>
+  <main>
+    
+<header>
+  <nav>
+    <a id="back-link" href="https://nsrahmad.github.io/posts">← Back</a>
+  </nav>
+</header>
+
+
+    <div>
+      
+      
+      
+      
+      <div id="copy-cfg" style="display: none;" data-copy-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+"></div>
+      
+      <article class="prose">
+        <h1>Advent of Code 2023 Using Pharo Smalltalk Day 2</h1>
+        
+        <div id="post-info">
+          <div id="date">
+            <span id="publish">Dec 2, 2023</span>
+            </div>
+
+          
+          <div id="tags">
+            <a class="instant" href="https://nsrahmad.github.io/tags/smalltalk/"><span>#</span>smalltalk</a><a class="instant" href="https://nsrahmad.github.io/tags/programming/"><span>#</span>programming</a><a class="instant" href="https://nsrahmad.github.io/tags/adventofcode/"><span>#</span>AdventOfCode</a>
+          </div>
+          
+        </div>
+
+        
+        
+
+        
+        
+        <blockquote id="outdate_alert" class="markdown-alert-caution hidden" data-days="120"
+          data-alert-text-before="This article was last updated "
+          data-alert-text-after=" days ago and may be out of date.">
+          <div class="content"></div>
+        </blockquote>
+        
+
+        <p>Yesterday’s solution already looks facepalm worthy even though its been only
+24 hours since. Hopefully today’s parsing code will be better. Let’s do this.</p>
+<h2 id="day-2-part-1">Day 2 - Part 1<a class="zola-anchor" href="#day-2-part-1" aria-label="Anchor link for: day-2-part-1" style="visibility: hidden;"></a>
+</h2>
+<p>Sample input for the first part is :</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="plain"><span class="giallo-l"><span>Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green</span></span>
+<span class="giallo-l"><span>Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue</span></span>
+<span class="giallo-l"><span>Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red</span></span>
+<span class="giallo-l"><span>Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red</span></span>
+<span class="giallo-l"><span>Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green</span></span></code></pre>
+<p>The games are numbered and each game has multiple sets separated by <code>;</code> with
+colored cubes taken from a bag. The condition is that maximum <code>12 red</code>, <code>13 green</code> and <code>14 blue</code> cubes are allowed. So if any set in a game exceeds this
+limit, the game becomes invalid. We have to calculate the sum of <code>id</code>’s of valid
+games. With the sample input, games 3 (20 red) and 4 (15 blue) are rejected and
+sum of <code>id</code>’s of the remaining games is <code>8</code>.</p>
+<p>We could take a shortcut here without parsing everything, but the unknown part
+2 might become harder, So it is better to just parse everything to proper data
+structures.</p>
+<p>We will continue with the same image we used <a href="https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/@advent-of-code-2023-using-pharo-smalltalk-day-1.md">yesterday</a>, which already has
+PetitParser loaded in it. Open a new playground get the sample input in it:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>input</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red</span></span>
+<span class="giallo-l"><span class="z-l-2 z-d-6">Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green</span><span class="z-l-2 z-d-6">&#39;</span><span>.</span></span></code></pre>
+<p>Let’s build up our parser.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> aColor</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-5 z-d-3">&quot;</span><span class="z-l-5 z-d-3">omitted</span><span class="z-l-5 z-d-3">&quot;</span></span>
+<span class="giallo-l"><span>aColor</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">red</span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	/ </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">green</span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	/ </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">blue</span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span><span class="z-l-8 z-d-10"> ==&gt; </span><span>[</span><span> :</span><span class="z-l-9 z-d-12">c</span><span class="z-l-8 z-d-10"> | </span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span> c</span><span> ]</span><span> .</span></span></code></pre>
+<p>We are not just matching color words but also transforming the result as actual
+color objects:</p>
+<p><img src="/img/day-2-part1-1.png" alt="day 2 color match" /></p>
+<p><code>anInteger</code> matches and transforms an integer number:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> aColor</span><span> anInteger</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-5 z-d-3">&quot;</span><span class="z-l-5 z-d-3">omitted</span><span class="z-l-5 z-d-3">&quot;</span></span>
+<span class="giallo-l"><span>anInteger</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-1 z-d-4"> #</span><span class="z-l-1 z-d-4">digit</span><span> asParser</span><span> plus</span><span> token</span><span> flatten</span><span class="z-l-8 z-d-10"> ==&gt; </span><span>[</span><span> :</span><span class="z-l-9 z-d-12">d</span><span class="z-l-8 z-d-10"> | </span><span>d</span><span> asNumber</span><span> ]</span><span>.</span></span></code></pre>
+<p><code>aCube</code> is just a number with a color:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> aColor</span><span> anInteger</span><span> aCube</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-5 z-d-3">&quot;</span><span class="z-l-5 z-d-3">omitted</span><span class="z-l-5 z-d-3">&quot;</span></span>
+<span class="giallo-l"><span>aCube</span><span class="z-l-8 z-d-10"> :=</span><span> anInteger</span><span class="z-l-8 z-d-10"> , </span><span>aColor</span><span> trim</span><span>.</span></span></code></pre>
+<p><code>trim</code> is used to also match surrounding whitespace. <code>aSet</code> and <code>aGame</code> are
+slightly more involved, but they are built incrementally with rapid feedback.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> aColor</span><span> anInteger</span><span> aCube</span><span> aSet</span><span> aGame</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-5 z-d-3">&quot;</span><span class="z-l-5 z-d-3">omitted</span><span class="z-l-5 z-d-3">&quot;</span></span>
+<span class="giallo-l"><span>aSet</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>(</span><span>aCube</span><span class="z-l-8 z-d-10"> , </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">,</span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span><span> trim</span><span> optional</span><span class="z-l-8 z-d-10"> ==&gt; </span><span>[</span><span>:</span><span class="z-l-9 z-d-12">c</span><span class="z-l-8 z-d-10"> | </span><span>c</span><span> allButLast</span><span>]</span><span>)</span><span> plus</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	, </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">;</span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span><span> optional</span><span>)</span><span class="z-l-8 z-d-10"> ==&gt; </span><span>[</span><span> :</span><span class="z-l-9 z-d-12">set</span><span class="z-l-8 z-d-10"> | </span><span>set</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span> ]</span><span>.</span></span>
+<span class="giallo-l"><span>aGame</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">Game </span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span><span class="z-l-8 z-d-10">, </span><span>anInteger</span><span class="z-l-8 z-d-10"> , </span><span class="z-l-2 z-d-6">&#39;</span><span class="z-l-2 z-d-6">:</span><span class="z-l-2 z-d-6">&#39;</span><span> asParser</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-8 z-d-10">	==&gt; </span><span>[</span><span>:</span><span class="z-l-9 z-d-12">game</span><span class="z-l-8 z-d-10"> | </span><span>game</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>]</span><span class="z-l-8 z-d-10">, </span><span>aSet</span><span> trim</span><span> plus</span><span>.</span></span></code></pre>
+<p>Unlike yesterday, we are not just matching stuff but also using transformers to
+get rid of <code>,</code>, <code>;</code>,<code>Game</code> and <code>:</code> etc. with this the parsing is complete.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>aGame</span><span class="z-l-6 z-d-7">  matchesSkipIn:</span><span> input</span></span></code></pre>
+<p><img src="/img/day-2-part1-2.png" alt="parse output" /></p>
+<p>Put the parsed result in <code>gamesCollection</code> variable</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> aColor</span><span> anInteger</span><span> aCube</span><span> aSet</span><span> aGame</span><span> gamesCollection</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-5 z-d-3">&quot;</span><span class="z-l-5 z-d-3">omitted</span><span class="z-l-5 z-d-3">&quot;</span></span>
+<span class="giallo-l"><span>gamesCollection</span><span class="z-l-8 z-d-10"> :=</span><span> (</span><span>aGame</span><span class="z-l-6 z-d-7">  matchesSkipIn:</span><span> input</span><span>)</span><span>.</span></span></code></pre>
+<p>Now to solve the puzzle we need to know whats the maximum number of cubes of
+each color are in a game.</p>
+<p>I defined a block function (lambda / anonymous function equivalent) which we
+store in another variable.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span class="z-l-8 z-d-10">| </span><span>input</span><span> aColor</span><span> anInteger</span><span> aCube</span><span> aSet</span><span> aGame</span><span> gamesCollection</span><span> maxRGBinSingleGame</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span class="z-l-5 z-d-3">&quot;</span><span class="z-l-5 z-d-3">omitted</span><span class="z-l-5 z-d-3">&quot;</span></span>
+<span class="giallo-l"><span>maxRGBinSingleGame</span><span class="z-l-8 z-d-10"> :=</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">game</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	|</span><span> dict</span><span class="z-l-8 z-d-10"> |</span></span>
+<span class="giallo-l"><span>	dict</span><span class="z-l-8 z-d-10"> :=</span><span class="z-l-6 z-d-7"> Dictionary</span><span> new</span><span>.</span></span>
+<span class="giallo-l"><span>	dict</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">red</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span class="z-l-6 z-d-7"> put:</span><span class="z-l-1 z-d-4"> 0</span><span>;</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">green</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span class="z-l-6 z-d-7"> put:</span><span class="z-l-1 z-d-4"> 0</span><span>;</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	 	at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">blue</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span class="z-l-6 z-d-7"> put:</span><span class="z-l-1 z-d-4"> 0</span><span>.</span></span>
+<span class="giallo-l"><span>	(</span><span>game</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> do:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>each</span><span class="z-l-6 z-d-7"> do:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">c</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>dict</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span>c</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span>(</span><span>c</span><span class="z-l-6 z-d-7"> at:</span></span>
+<span class="giallo-l"><span class="z-l-1 z-d-4">1</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">		ifFalse:</span><span> [</span><span> dict</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span>c</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> put:</span><span> (</span><span>c</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span>)</span><span> ]</span><span>]</span><span>]</span><span>.</span></span>
+<span class="giallo-l"><span>	{</span><span> (</span><span>game</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span>)</span><span> .</span><span> dict</span><span> }</span><span>.</span></span>
+<span class="giallo-l"><span>]</span><span>.</span></span></code></pre>
+<p>It basically creates a Dictionary with RGB counts at 0, then iterate on each set
+and check if the RGB count is <code>&gt;</code> than the local dict. If it is update the
+local dict and at the end return the game id with local dict with max values of
+RGB as an array.</p>
+<p>Not pretty because of lots of manual indexing. But effective. The result seems
+to be right.</p>
+<p><img src="/img/day-2-part1-3.png" alt="maximum colors" /></p>
+<p>Now we know the maximum colored cubes count, we can use <code>reject:</code> to remove
+anything if it exceeds the official limit:</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>(</span><span>(</span><span>(</span><span>(</span><span>gamesCollection</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>maxRGBinSingleGame</span><span class="z-l-6 z-d-7"> value:</span><span> each</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">red</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">12</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">green</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">13</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">blue</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">14</span><span> ]</span><span>)</span></span></code></pre>
+<p>This correctly gets rid of game 3 and 4.</p>
+<p><img src="/img/day-2-part1-4.png" alt="invalid rejected" /></p>
+<p>Now fold the <code>id</code>s using <code>inject:into:</code> and we get the correct result <code>8</code>.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>(</span><span>(</span><span>(</span><span>(</span><span>gamesCollection</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>maxRGBinSingleGame</span><span class="z-l-6 z-d-7"> value:</span><span> each</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">red</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">12</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">green</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">13</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	reject:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span class="z-l-6 z-d-7"> at:</span><span> (</span><span class="z-l-6 z-d-7">Color</span><span class="z-l-6 z-d-7"> named:</span><span class="z-l-2 z-d-6"> &#39;</span><span class="z-l-2 z-d-6">blue</span><span class="z-l-2 z-d-6">&#39;</span><span>)</span><span>)</span><span class="z-l-8 z-d-10"> &gt; </span><span class="z-l-1 z-d-4">14</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	inject:</span><span class="z-l-1 z-d-4"> 0</span><span class="z-l-6 z-d-7"> into:</span><span> [</span><span>:</span><span class="z-l-9 z-d-12">sum</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>sum</span><span class="z-l-8 z-d-10"> + </span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 1</span><span>)</span><span> ]</span><span>.</span></span></code></pre>
+<p>changing the sample input with the actaul <code>input.txt</code> and submitting the
+result, we pass the part 1 of the puzzle.
+<img src="/img/day-2-part1-5.png" alt="final part 1" /></p>
+<h2 id="day-2-part-2">Day 2 - part 2<a class="zola-anchor" href="#day-2-part-2" aria-label="Anchor link for: day-2-part-2" style="visibility: hidden;"></a>
+</h2>
+<p>part 2 turned out to be simple. We need to again calculate the
+<code>maxRGBinSingleGame</code> (though they worded it differently) but this time we have
+to multiply each max r g b value in a game and sum the result.</p>
+<p>Everything up until <code>maxRGBinSingleGame</code> remains untouched, only the last step
+needs to be changed.</p>
+<pre class="giallo z-l-code z-d-code" ><code data-lang="smalltalk"><span class="giallo-l"><span>(</span><span>(</span><span>gamesCollection</span><span class="z-l-6 z-d-7"> collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>maxRGBinSingleGame</span><span class="z-l-6 z-d-7"> value:</span><span> each</span><span> ]</span><span>)</span></span>
+<span class="giallo-l"><span class="z-l-6 z-d-7">	collect:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">each</span><span class="z-l-8 z-d-10"> | </span><span>(</span><span>(</span><span>each</span><span class="z-l-6 z-d-7"> at:</span><span class="z-l-1 z-d-4"> 2</span><span>)</span><span> values</span><span>)</span><span class="z-l-6 z-d-7"> inject:</span><span class="z-l-1 z-d-4"> 1</span><span class="z-l-6 z-d-7"> into:</span><span>[</span><span>:</span><span class="z-l-9 z-d-12">prod</span><span> :</span><span class="z-l-9 z-d-12">e</span><span>|</span><span> prod</span><span class="z-l-8 z-d-10"> * </span><span>e</span></span>
+<span class="giallo-l"><span>]</span><span>]</span><span>)</span><span class="z-l-6 z-d-7"> inject:</span><span class="z-l-1 z-d-4"> 0</span><span class="z-l-6 z-d-7"> into:</span><span> [</span><span> :</span><span class="z-l-9 z-d-12">sum</span><span> :</span><span class="z-l-9 z-d-12">e</span><span class="z-l-8 z-d-10"> | </span><span>sum</span><span class="z-l-8 z-d-10"> + </span><span>e</span><span> ]</span><span>.</span></span></code></pre>
+<p><img src="/img/day-2-part2-1.png" alt="final part 2, really?" /></p>
+<p>and the answer is accepted. This concludes today’s puzzle.</p>
+<p>Thanks for reading.</p>
+
+      </article>
+
+      
+      
+
+      
+      
+    </div>
+
+    
+
+  
+  
+
+<footer>
+  <div class="left">
+    <div class="copyright">
+      © 2026 Nisar Ahmad
+      
+    </div>
+  </div>
+
+  <div class="right">
+    
+    <a id="rss-btn" href="https://nsrahmad.github.io/posts/rss.xml">RSS</a>
+    
+
+    
+    
+    
+    <button id="theme-toggle" aria-label="theme switch">
+      <span class="moon-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M10 7C10 10.866 13.134 14 17 14C18.9584 14 20.729 13.1957 21.9995 11.8995C22 11.933 22 11.9665 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.0335 2 12.067 2 12.1005 2.00049C10.8043 3.27098 10 5.04157 10 7ZM4 12C4 16.4183 7.58172 20 12 20C15.0583 20 17.7158 18.2839 19.062 15.7621C18.3945 15.9187 17.7035 16 17 16C12.0294 16 8 11.9706 8 7C8 6.29648 8.08133 5.60547 8.2379 4.938C5.71611 6.28423 4 8.9417 4 12Z" fill="currentColor"></path></svg>
+</span>
+      <span class="sun-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z" fill="currentColor"></path></svg>
+</span>
+    </button>
+    
+  </div>
+</footer>
+
+
+
+<dialog id="rss-mask">
+  <div>
+    <a href="https://nsrahmad.github.io/posts/rss.xml">https://nsrahmad.github.io/posts/rss.xml</a>
+    
+    
+    <button autofocus aria-label="copy" data-link="https://nsrahmad.github.io/posts/rss.xml" data-copy-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+" data-check-icon="&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 24 24&quot; width=&quot;18&quot; height=&quot;18&quot;&gt;&lt;path d=&quot;M10.0007 15.1709L19.1931 5.97852L20.6073 7.39273L10.0007 17.9993L3.63672 11.6354L5.05093 10.2212L10.0007 15.1709Z&quot; fill=&quot;currentColor&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+" >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path d="M6.9998 6V3C6.9998 2.44772 7.44752 2 7.9998 2H19.9998C20.5521 2 20.9998 2.44772 20.9998 3V17C20.9998 17.5523 20.5521 18 19.9998 18H16.9998V20.9991C16.9998 21.5519 16.5499 22 15.993 22H4.00666C3.45059 22 3 21.5554 3 20.9991L3.0026 7.00087C3.0027 6.44811 3.45264 6 4.00942 6H6.9998ZM5.00242 8L5.00019 20H14.9998V8H5.00242ZM8.9998 6H16.9998V16H18.9998V4H8.9998V6Z" fill="currentColor"></path></svg>
+
+    </button>
+  </div>
+</dialog>
+
+
+  </main>
+</div>
+
+  
+<script src="/js/lightense.min.js"></script>
+
+
+
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>

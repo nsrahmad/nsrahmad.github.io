@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  
+  <title>404</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://nsrahmad.github.io/img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://nsrahmad.github.io/img/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://nsrahmad.github.io/img/apple-touch-icon.png">
+  <style>
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/linux-biolinum-custom-400-normal.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/linux-biolinum-custom-400-italic.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+@font-face {
+  font-family: 'Linux Biolinum';
+  font-style: bold;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/fonts/linux-biolinum-custom-700-normal.woff2) format(woff2);
+  unicode-range: U+20-7E, U+A0-FF, U+131, U+152-153, U+2BB-2BC, U+2C6, U+2DA, U+2DC, U+300-301, U+303-304, U+308-309, U+323, U+329, U+2002, U+2009, U+200B, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+2032-2033, U+2039-203A, U+2044, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Datatype Regular';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/fonts/Datatype_Regular.woff2) format(woff2);
+}
+</style>
+
+  <style>
+
+  /* light mode colors */
+body {
+  /* A vibrant, modern Royal Blue for better pop and accessibility */
+  --primary-color: #2563eb;
+  --primary-pale-color: #2563eb1a;  /* 10% opacity */
+  --primary-decoration-color: #2563eb14; /* 8% opacity */
+
+  --bg-color: #ffffff;
+
+  /* Deep gray-blue instead of flat gray for richer contrast */
+  --text-color: #111827;
+  --text-pale-color: #4b5563;       /* Darker pale text to meet WCAG contrast guidelines */
+  --text-decoration-color: #d1d5db;
+  --highlight-mark-color: #2563eb26; /* 15% opacity */
+
+  /* Callouts updated to bright, distinct, semantic hues */
+  --callout-note-color: #2563eb;     /* Blue */
+  --callout-tip-color: #16a34a;      /* Emerald Green */
+  --callout-important-color: #9333ea;/* Vibrant Purple */
+  --callout-warning-color: #ea580c;  /* Bright Orange */
+  --callout-caution-color: #dc2626;  /* Strong Red */
+}
+
+/* dark mode colors */
+body.dark {
+  /* A bright, soft sky blue that is highly legible on dark backgrounds */
+  --primary-color: #60a5fa;
+  --primary-pale-color: #60a5fa26;   /* 15% opacity */
+  --primary-decoration-color: #60a5fa14; /* 8% opacity */
+
+  /* A deep, slightly cool-tinted dark gray (far more premium than flat #1c1c1c) */
+  --bg-color: #111827;
+
+  /* Off-white and medium-light grays to reduce eye strain while keeping contrast high */
+  --text-color: #f3f4f6;
+  --text-pale-color: #9ca3af;
+  --text-decoration-color: #374151;
+  --highlight-mark-color: #60a5fa33; /* 20% opacity */
+
+  /* Callouts updated to neon/pastel variants so they glow nicely in dark mode */
+  --callout-note-color: #60a5fa;     /* Sky Blue */
+  --callout-tip-color: #4ade80;      /* Light Green */
+  --callout-important-color: #c084fc;/* Light Purple */
+  --callout-warning-color: #fb923c;  /* Light Orange */
+  --callout-caution-color: #f87171;  /* Light Red */
+}
+
+  /* typography */
+  body {
+    --main-font: 'Linux Biolinum', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --code-font: 'Datatype Regular',ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --homepage-max-width: 768px;
+    --main-max-width: 768px;
+    --avatar-size: 60px;
+    --font-size: 1.2rem;
+    --line-height: 1.75;
+    --img-border-radius: 0px;
+    --detail-border-radius: 0px;
+    --dark-mode-img-brightness: 0.75;
+    --dark-mode-chart-brightness: 0.75;
+    --inline-code-border-radius: 2px;
+    --inline-code-bg-color: var(--primary-decoration-color);
+    --block-code-border-radius: 0px;
+    --block-code-border-color: var(--primary-color);
+    --detail-border-color: var(--primary-color);
+  }
+
+</style>
+
+  <link rel="stylesheet" href="https://nsrahmad.github.io/main.css">
+  
+  <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "3b2ad4933163428581689380621df0af"}'></script><!-- End Cloudflare Web Analytics -->
+
+</head>
+
+<body class="not-found">
+  
+  <script>
+    const theme = sessionStorage.getItem('theme');
+    const match = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if ((theme && theme == 'dark') || (!theme && match)) {
+      document.body.classList.add('dark');
+      const hl = document.querySelector('link#hl');
+      if (hl) hl.href = 'https://nsrahmad.github.io/giallo-dark.css';
+    }
+  </script>
+  
+  
+<div class="wrapper">
+  <p class="error">
+    404 Not Found
+  </p>
+  <a class="instant" href="https://nsrahmad.github.io">« back to home »</a>
+</div>
+
+  
+  <script src="https://nsrahmad.github.io/js/main.js"></script>
+</body>
+
+</html>

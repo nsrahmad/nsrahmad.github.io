@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://nsrahmad.github.io/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/categories/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/posts/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-1/</loc>
+        <lastmod>2023-12-01T22:57:52+05:30</lastmod>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-2/</loc>
+        <lastmod>2023-12-02T23:10:23+05:30</lastmod>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/posts/advent-of-code-2023-using-pharo-smalltalk-day-3/</loc>
+        <lastmod>2023-12-10T19:55:44+05:30</lastmod>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/tags/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/tags/adventofcode/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/tags/programming/</loc>
+    </url>
+    <url>
+        <loc>https://nsrahmad.github.io/tags/smalltalk/</loc>
+    </url>
+</urlset>
